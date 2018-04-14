@@ -1,6 +1,7 @@
 #ifndef HACKSERVER_H
 #define HACKSERVER_H
 
+#include <map>
 #include <QMainWindow>
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -27,7 +28,9 @@ private slots:
 private:
     Ui::hackserver* ui;
     QTcpServer* tcpServ;
-    QTcpSocket* tcpSock;
+    int client_number = 0;
+    std::map<int, QTcpSocket*> clients_map;
+
 };
 
 #endif // HACKSERVER_H

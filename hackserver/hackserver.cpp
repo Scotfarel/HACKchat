@@ -7,7 +7,7 @@ hackserver::hackserver(QWidget *parent) :
 {
     ui->setupUi(this);
     tcpServ = new QTcpServer(this);
-    tcpSock = new QTcpSocket(this);
+
 
     tcpServ->listen(QHostAddress::LocalHost, 8888);
     connect(tcpServ, SIGNAL(newConnection()), this, SLOT(connect_new()));
@@ -19,15 +19,17 @@ hackserver::~hackserver()
 }
 
 void hackserver::connect_new() {
-    tcpSock = tcpServ->nextPendingConnection();
-    tcpSock->write("hello there\n");
-    connect(tcpSock, SIGNAL(readyRead()), this, SLOT(read()));
+    QTcpSocket* sock = tcpServ->nextPendingConnection();
+    clients_map.emplace(client_number, sock);
+    client_number++;
+    sock->write("hello there\n");
+    connect(sock, SIGNAL(readyRead()), this, SLOT(read()));
 }
 
 void hackserver::read(){
     QByteArray buffer;
-    buffer.resize(tcpSock->bytesAvailable());
-    tcpSock->read(buffer.data(), buffer.size());
+    buffer.resize(clients_map[0]->bytesAvailable());
+    clients_map[0]->read(buffer.data(), buffer.size());
     ui->plainTextEdit->setReadOnly( true );
     ui->plainTextEdit->appendPlainText( QString (buffer));
 }
@@ -36,6 +38,6 @@ void hackserver::read(){
 void hackserver::on_pushButton_released()
 {
 
-    tcpSock->write( ui->lineEdit->text().toLatin1().data(), ui->lineEdit->text().size());
+    clients_map[0]->write( ui->lineEdit->text().toLatin1().data(), ui->lineEdit->text().size());
     ui->lineEdit->clear();
 }
