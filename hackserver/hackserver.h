@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QListWidgetItem>
 
 namespace Ui {
 class hackserver;
@@ -21,6 +22,7 @@ public:
 public slots:
     void connect_new();
     void read();
+    void disconnect();
 
 private slots:
     void on_pushButton_released();
