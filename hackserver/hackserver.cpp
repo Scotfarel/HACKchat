@@ -53,6 +53,11 @@ void hackserver::read(){
     client->read(buffer.data(), buffer.size());
     ui->plainTextEdit->setReadOnly( true );
     ui->plainTextEdit->appendPlainText( QString (buffer));
+
+    // hard again
+    char* really = buffer.data();
+    QTcpSocket* second_client = clients_map[really[0]-'0'];
+    second_client->write(buffer.data(), buffer.size());
 }
 
 void hackserver::disconnect() {

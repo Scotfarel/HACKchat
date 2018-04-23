@@ -23,8 +23,10 @@ public slots:
 private:
     Ui::Client *ui;
     QTcpSocket *tcpSock;
+    QList<int> users_online;
 private slots:
     void on_pushButton_clicked();
+    void on_lineEdit_textEdited(const QString &arg1);
 };
 
 #endif // CLIENT_H
