@@ -17,6 +17,7 @@ class hackserver : public QMainWindow
 
 public:
     explicit hackserver(QWidget *parent = 0);
+    QStringList getOnlineUsers(QTcpSocket* current = nullptr);
     ~hackserver();
 
 public slots:
