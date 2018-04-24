@@ -1,6 +1,9 @@
 #include "client.h"
 #include "ui_client.h"
 
+hackchat::Message *msg = src.add_message();
+
+
 Client::Client(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Client)
@@ -34,14 +37,29 @@ void Client::leer() {
     QByteArray buffer;
     buffer.resize( tcpSock->bytesAvailable() );
     tcpSock->read( buffer.data(), buffer.size() );
+    QByteArray byte_Array = readSerializedPersonFromQTcpSocket();
+    Message msg;
+    if (!msg.ParseFromArray(byte_Array, byte_Array.size())) {
+      std::cerr << "Failed to parse person.pb." << std::endl;
+    }
     ui->plainTextEdit->setReadOnly( true );
     ui->plainTextEdit->appendPlainText( QString (buffer));
 }
 
 void Client::on_lineEdit_textEdited(const QString &arg1)
 {
+
     // HERE! RIGHT HERE!
+    Message msg;
+    msg.set_sender_id();
+    msg.set_host_id();
+    msg.set_msg_text(tcpSock->write(send.toLatin1().data(), ui->lineEdit->text().size() + 1));
+
+    msg.SerializeToOstream(tcpSock);
+    QByteArray byte_Array(msg.SerializeAsString().c_str(), msg.ByteSize());
+
     qDebug(arg1.toLatin1().data());
+
     // also u can show text this way:
     ui->feature->setPlainText(arg1);
 }

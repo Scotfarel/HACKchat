@@ -1,6 +1,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
-
+#include <google/protobuf/message.h>
+#include <message.pb.h>
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QHostAddress>
