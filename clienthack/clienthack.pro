@@ -11,12 +11,14 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = clienthack
 TEMPLATE = app
-
+LIBS += -L/usr/local/lib -lprotobuf
 CONFIG += c++11
 
-SOURCES += main.cpp\
-        client.cpp
+SOURCES += main.cpp \
+        client.cpp \
+        ../proto/client.pb.cc
 
-HEADERS  += client.h
+HEADERS  += client.h \
+        ../proto/client.pb.h
 
 FORMS    += client.ui

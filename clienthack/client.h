@@ -1,10 +1,13 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 #include <google/protobuf/message.h>
-#include <message.pb.h>
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QHostAddress>
+
+#include "../proto/client.pb.h"
+
+using hackchat::FromClient;
 
 namespace Ui {
 class Client;
@@ -25,9 +28,13 @@ private:
     Ui::Client *ui;
     QTcpSocket *tcpSock;
     QList<int> users_online;
+    QString nickname;
+    int id;
+    void first_msg(const FromClient& msg);
 private slots:
     void on_pushButton_clicked();
     void on_lineEdit_textEdited(const QString &arg1);
+    void on_pushButton_2_pressed();
 };
 
 #endif // CLIENT_H

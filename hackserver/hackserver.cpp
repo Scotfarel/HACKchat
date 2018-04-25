@@ -1,13 +1,14 @@
 #include "hackserver.h"
 #include "ui_hackserver.h"
 
+using hackchat::FromClient;
+
 hackserver::hackserver(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::hackserver)
 {
     ui->setupUi(this);
     tcpServ = new QTcpServer(this);
-
 
     tcpServ->listen(QHostAddress::LocalHost, 8888);
     connect(tcpServ, SIGNAL(newConnection()), this, SLOT(connect_new()));
@@ -22,42 +23,56 @@ void hackserver::connect_new() {
     QTcpSocket* sock = tcpServ->nextPendingConnection();
     clients_map.emplace(client_number, sock);
     ui->users->addItem(QString(client_number+'0'));
-    client_number++;
-    sock->write("hello there number\n");
+    FromClient msg;
+    msg.set_sender_id(-1);
+    msg.set_host_id(client_number);
+    msg.set_is_feature(false);
+    std::string online;
+    for (auto it = clients_map.begin(); it != clients_map.end(); ++it) {
+        online += it->first + '0';
+        online += ' ';
+    }
+    msg.set_msg_text(online);
+    QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
+    sock->write(f_message);
     connect(sock, SIGNAL(readyRead()), this, SLOT(read()));
     connect(sock, SIGNAL(disconnected()), this, SLOT(disconnect()));
-    QByteArray users_on;
-    QStringList online = getOnlineUsers();
-    foreach (const QString &str, online)
-    {
-        users_on.append(str);
-    }
-    sock->write(users_on);
+    send_everyone_new(client_number);
+    client_number++;
 }
 
-QStringList hackserver::getOnlineUsers(QTcpSocket* current) {
-    QStringList online;
-    for (auto c : clients_map) {
-        if (c.second == current) {
+void hackserver::send_everyone_new(int id) {
+    FromClient msg;
+    msg.set_sender_id(-1);
+    msg.set_is_feature(false);
+    msg.set_msg_text(std::string(1, id + '0')); // not perfect
+    for (auto it = clients_map.begin(); it != clients_map.end(); ++it) {
+        if (it->first == id) {
             continue;
         }
-        online.append(QString(c.first + '0'));
+        msg.set_host_id(it->first);
+        QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
+        it->second->write(f_message);
     }
-    return online;
 }
 
-void hackserver::read(){
-    QByteArray buffer;
+void hackserver::read() {
     QTcpSocket* client = (QTcpSocket*)sender();
+    QByteArray buffer;
     buffer.resize(client->bytesAvailable());
     client->read(buffer.data(), buffer.size());
-    ui->plainTextEdit->setReadOnly( true );
-    ui->plainTextEdit->appendPlainText( QString (buffer));
-
-    // hard again
-    char* really = buffer.data();
-    QTcpSocket* second_client = clients_map[really[0]-'0'];
-    second_client->write(buffer.data(), buffer.size());
+    FromClient msg;
+    if (!msg.ParseFromArray(buffer, buffer.size())) {
+      qDebug() << "Failed to parse message.";
+    }
+    std::string text = std::to_string(msg.sender_id());
+    text.append(" : ");
+    text.append(msg.msg_text());
+    ui->plainTextEdit->appendPlainText(QString::fromStdString(text));
+    if (msg.host_id() != -1) {
+        auto need_to = clients_map.find(msg.host_id());
+        need_to->second->write(buffer);
+    }
 }
 
 void hackserver::disconnect() {
@@ -82,8 +97,14 @@ void hackserver::disconnect() {
 
 void hackserver::on_pushButton_released()
 {
+    FromClient msg;
+    msg.set_sender_id(100);
+    msg.set_host_id(0);
+    msg.set_is_feature(false);
+    msg.set_msg_text(ui->lineEdit->text().toStdString());
+    QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
     for (std::pair<int const, QTcpSocket*>& c : clients_map) {
-        c.second->write( ui->lineEdit->text().toLatin1().data(), ui->lineEdit->text().size());
+        c.second->write(f_message, f_message.size());
     }
     ui->lineEdit->clear();
 }

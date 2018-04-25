@@ -1,11 +1,15 @@
 #ifndef HACKSERVER_H
 #define HACKSERVER_H
 
+#include <google/protobuf/message.h>
 #include <map>
+#include <string.h>
 #include <QMainWindow>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QListWidgetItem>
+
+#include "../proto/client.pb.h"
 
 namespace Ui {
 class hackserver;
@@ -17,7 +21,6 @@ class hackserver : public QMainWindow
 
 public:
     explicit hackserver(QWidget *parent = 0);
-    QStringList getOnlineUsers(QTcpSocket* current = nullptr);
     ~hackserver();
 
 public slots:
@@ -33,6 +36,7 @@ private:
     QTcpServer* tcpServ;
     int client_number = 0;
     std::map<int, QTcpSocket*> clients_map;
+    void send_everyone_new(int id);
 
 };
 

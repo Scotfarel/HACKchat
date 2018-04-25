@@ -4,20 +4,22 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core gui
 QT += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = hackserver
 TEMPLATE = app
-
+LIBS += -L/usr/local/lib -lprotobuf
 CONFIG += c++11
 
 
-SOURCES += main.cpp\
-        hackserver.cpp
+SOURCES += main.cpp \
+        hackserver.cpp \
+        ../proto/client.pb.cc
 
-HEADERS  += hackserver.h
+HEADERS  += hackserver.h \
+          ../proto/client.pb.h
 
 FORMS    += hackserver.ui
