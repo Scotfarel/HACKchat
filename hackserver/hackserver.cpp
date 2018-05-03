@@ -1,32 +1,42 @@
 #include "hackserver.h"
 #include "ui_hackserver.h"
 
-using hackchat::Package;
-using hackchat::TextMsg;
-using hackchat::StatusMsg;
-
 hackserver::hackserver(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::hackserver)
 {
     ui->setupUi(this);
+
     tcpServ = new QTcpServer(this);
 
     tcpServ->listen(QHostAddress::LocalHost, 8888);
     connect(tcpServ, SIGNAL(newConnection()), this, SLOT(connect_new()));
+
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("/home/kaito/hackchat/hackserver/hack.db3");
+    if(!db.open()) {
+        qDebug() << db.lastError().text();
+    }
+
+    QSqlQuery query("SELECT user_id, login, p_hash FROM user");
+
+    while (query.next()) {
+        QString _id = query.value(0).toString();
+        QString name = query.value(1).toString();
+        QString age = query.value(2).toString();
+        qDebug() << _id << name << age;
+    }
 }
 
-hackserver::~hackserver()
-{
+hackserver::~hackserver() {
     delete ui;
 }
 
 void hackserver::connect_new() {
     QTcpSocket* sock = tcpServ->nextPendingConnection();
-    ui->users->addItem(QString::number(client_number));
     connect(sock, SIGNAL(readyRead()), this, SLOT(read()));
     connect(sock, SIGNAL(disconnected()), this, SLOT(disconnect()));
-    Package msg;
+    /*Package msg;
     msg.set_sender_id(-1);
     msg.set_host_id(client_number);
     StatusMsg* status = new StatusMsg;
@@ -37,10 +47,7 @@ void hackserver::connect_new() {
             QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
             sock->write(f_message);
             qDebug() << "sended" << msg.status().connected_id() << "to" << client_number << "can u" << f_message;
-    }
-    send_everyone_new(client_number);
-    clients_map.emplace(client_number, sock);
-    client_number++;
+    }*/
 }
 
 void hackserver::send_everyone_new(int id) {
@@ -81,11 +88,44 @@ void hackserver::read() {
     std::string text = std::to_string(msg.sender_id());
     text.append(" : ");
     text.append(msg.text().msg_text());
+    qDebug() << "msg u mean:" << QString::fromStdString(text);
     ui->plainTextEdit->appendPlainText(QString::fromStdString(text));
     if (msg.host_id() != -1) {
         auto need_to = clients_map.find(msg.host_id());
         need_to->second->write(buffer);
     }
+    if (msg.sender_id() == 0) {
+        if (auth(msg, client)) {
+            client_number++;
+        }
+    }
+}
+
+bool hackserver::auth(Package& msg, QTcpSocket* user) {
+    QStringList info = QString::fromStdString(msg.text().msg_text()).split(' ', QString::SkipEmptyParts);
+    QString login = info.at(0);
+    QString password = info.at(1);
+    QSqlQuery query;
+    query.prepare("SELECT * FROM user WHERE login = ? AND p_hash = ?");
+    query.bindValue(0, login);
+    query.bindValue(1, password);
+    if (!query.exec()) {
+        qDebug() << query.lastError().text();
+        return false;
+    }
+    if (!query.next()) {
+        return false;
+    }
+    int user_id = query.value("user_id").toInt();
+    Package answer;
+    answer.set_sender_id(-1);
+    answer.set_host_id(user_id);
+    QByteArray f_message(answer.SerializeAsString().c_str(), answer.ByteSize());
+    user->write(f_message);
+    send_everyone_new(user_id);
+    clients_map.emplace(user_id, user);
+    ui->users->addItem(QString::number(user_id));
+    return true;
 }
 
 void hackserver::disconnect() {

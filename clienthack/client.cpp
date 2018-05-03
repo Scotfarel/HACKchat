@@ -4,9 +4,10 @@
 Client::Client(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Client),
-    id(-1) // maybe we should change it
+    id(0) // maybe we should change it
 {
     ui->setupUi(this);
+    ui->nickname_line->setFocus();
 }
 
 Client::~Client() {
@@ -32,7 +33,15 @@ void Client::on_pushButton_clicked() {
 }
 
 void Client::msg_from_server(const Package& msg) {
-    qDebug() << "arrived" << msg.status().connected_id();
+    if (!msg.has_status()) {
+        if (msg.host_id() == 0) {
+            ui->msg_label->setText("Wrong login or password!");
+            return;
+        }
+        id = msg.host_id();
+        ui->msg_label->setText("<font color='black'>Auth successed</font>");
+        ui->stackedWidget->setCurrentIndex(1);
+    }
     if (msg.status().connected()) {
         ui->online->addItem(QString::number(msg.status().connected_id()));
     } else {
@@ -52,9 +61,6 @@ void Client::leer() {
     Package msg;
     if (!msg.ParseFromArray(buffer, buffer.size())) {
       qDebug() << "Failed to parse message.";
-    }
-    if (id == -1) {
-        id = msg.host_id();
     }
     if (msg.sender_id() == -1) {
         msg_from_server(msg);
@@ -87,8 +93,34 @@ void Client::on_lineEdit_textEdited(const QString &arg1)
 
 void Client::on_pushButton_2_pressed()
 {
-    ui->stackedWidget->setCurrentIndex(1);
+    if (ui->nickname_line->text().isEmpty()) {
+        ui->msg_label->setText("Login field is empty!");
+        return;
+    }
+    if (ui->password_line->text().isEmpty()) {
+        ui->msg_label->setText("Password field is empty!");
+        return;
+    }
+
     tcpSock = new QTcpSocket(this);
     tcpSock->connectToHost(QHostAddress(ui->address_line->text()), ui->port_line->text().toInt());
     connect(tcpSock, SIGNAL(readyRead()), this, SLOT(leer()));
+
+    send_user_info();
+}
+
+void Client::send_user_info() {
+    Package msg;
+    msg.set_sender_id(id);
+    msg.set_host_id(-1);
+    TextMsg* text = new TextMsg;
+    text->set_is_feature(false);
+    QString user_info(ui->nickname_line->text());
+    user_info.append(' ');
+    user_info.append(ui->password_line->text());
+    qDebug() << user_info;
+    text->set_msg_text(user_info.toStdString());
+    msg.set_allocated_text(text);
+    QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
+    tcpSock->write(f_message);
 }

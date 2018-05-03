@@ -33,6 +33,7 @@ private:
     QString nickname;
     int id;
     void msg_from_server(const Package& msg);
+    void send_user_info();
 private slots:
     void on_pushButton_clicked();
     void on_lineEdit_textEdited(const QString &arg1);

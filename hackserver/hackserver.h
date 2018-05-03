@@ -7,9 +7,15 @@
 #include <QMainWindow>
 #include <QTcpServer>
 #include <QTcpSocket>
-#include <QListWidgetItem>
+#include <QtSql/QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
 
 #include "../proto/hackmessage.pb.h"
+
+using hackchat::Package;
+using hackchat::TextMsg;
+using hackchat::StatusMsg;
 
 namespace Ui {
 class hackserver;
@@ -34,10 +40,11 @@ private slots:
 private:
     Ui::hackserver* ui;
     QTcpServer* tcpServ;
-    int client_number = 0;
+    QSqlDatabase db;
+    int client_number = 1;
     std::map<int, QTcpSocket*> clients_map;
     void send_everyone_new(int id);
     void send_everyone_disconnected(int id);
-};
+    bool auth(Package& msg, QTcpSocket* user);};
 
 #endif // HACKSERVER_H
