@@ -39,6 +39,8 @@ private slots:
     void on_pushButton_clicked();
     void on_lineEdit_textEdited(const QString &arg1);
     void on_pushButton_2_pressed();
+    void on_nickname_line_textEdited(const QString &arg1);
+    void on_password_line_textEdited(const QString &arg1);
 };
 
 #endif // CLIENT_H

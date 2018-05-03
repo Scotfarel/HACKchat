@@ -17,15 +17,6 @@ hackserver::hackserver(QWidget *parent) :
     if(!db.open()) {
         qDebug() << db.lastError().text();
     }
-
-    QSqlQuery query("SELECT user_id, login, p_hash FROM user");
-
-    while (query.next()) {
-        QString _id = query.value(0).toString();
-        QString name = query.value(1).toString();
-        QString age = query.value(2).toString();
-        qDebug() << _id << name << age;
-    }
 }
 
 hackserver::~hackserver() {
@@ -113,12 +104,16 @@ bool hackserver::auth(Package& msg, QTcpSocket* user) {
         qDebug() << query.lastError().text();
         return false;
     }
+    Package answer;
+    answer.set_sender_id(-1);
     if (!query.next()) {
+        answer.set_host_id(0);
+        QByteArray f_message(answer.SerializeAsString().c_str(), answer.ByteSize());
+        user->write(f_message);
         return false;
     }
     int user_id = query.value("user_id").toInt();
-    Package answer;
-    answer.set_sender_id(-1);
+
     answer.set_host_id(user_id);
     QByteArray f_message(answer.SerializeAsString().c_str(), answer.ByteSize());
     user->write(f_message);

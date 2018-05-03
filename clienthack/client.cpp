@@ -41,6 +41,7 @@ void Client::msg_from_server(const Package& msg) {
         id = msg.host_id();
         ui->msg_label->setText("<font color='black'>Auth successed</font>");
         ui->stackedWidget->setCurrentIndex(1);
+        this->setWindowTitle(ui->nickname_line->text());
     }
     if (msg.status().connected()) {
         ui->online->addItem(QString::number(msg.status().connected_id()));
@@ -125,4 +126,14 @@ void Client::send_user_info() {
     msg.set_allocated_text(text);
     QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
     tcpSock->write(f_message);
+}
+
+void Client::on_nickname_line_textEdited(const QString &arg1)
+{
+    ui->msg_label->clear();
+}
+
+void Client::on_password_line_textEdited(const QString &arg1)
+{
+    ui->msg_label->clear();
 }
