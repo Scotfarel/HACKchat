@@ -31,6 +31,7 @@ private:
     QTcpSocket *tcpSock;
     QList<int> users_online;
     QString nickname;
+    bool first_connect = false; // i will change it
     int id;
     void msg_from_server(const Package& msg);
     void send_user_info();

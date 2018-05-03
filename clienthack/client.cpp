@@ -102,10 +102,12 @@ void Client::on_pushButton_2_pressed()
         return;
     }
 
-    tcpSock = new QTcpSocket(this);
-    tcpSock->connectToHost(QHostAddress(ui->address_line->text()), ui->port_line->text().toInt());
-    connect(tcpSock, SIGNAL(readyRead()), this, SLOT(leer()));
-
+    if (first_connect == false) {
+        tcpSock = new QTcpSocket(this);
+        tcpSock->connectToHost(QHostAddress(ui->address_line->text()), ui->port_line->text().toInt());
+        connect(tcpSock, SIGNAL(readyRead()), this, SLOT(leer()));
+        first_connect = true;
+    }
     send_user_info();
 }
 
