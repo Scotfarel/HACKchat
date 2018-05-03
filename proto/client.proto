@@ -1,9 +1,0 @@
-syntax = "proto3";
-package hackchat;
-
-message FromClient {
-	int32 sender_id = 1;
-	int32 host_id = 2;
-	string msg_text = 3;
-	bool is_feature = 4;
-}

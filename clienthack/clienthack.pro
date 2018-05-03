@@ -16,9 +16,9 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
         client.cpp \
-        ../proto/client.pb.cc
+        ../proto/hackmessage.pb.cc
 
 HEADERS  += client.h \
-        ../proto/client.pb.h
+        ../proto/hackmessage.pb.h
 
 FORMS    += client.ui

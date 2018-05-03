@@ -5,9 +5,11 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 
-#include "../proto/client.pb.h"
+#include "../proto/hackmessage.pb.h"
 
-using hackchat::FromClient;
+using hackchat::Package;
+using hackchat::TextMsg;
+using hackchat::StatusMsg;
 
 namespace Ui {
 class Client;
@@ -30,7 +32,7 @@ private:
     QList<int> users_online;
     QString nickname;
     int id;
-    void first_msg(const FromClient& msg);
+    void msg_from_server(const Package& msg);
 private slots:
     void on_pushButton_clicked();
     void on_lineEdit_textEdited(const QString &arg1);

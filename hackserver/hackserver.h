@@ -9,7 +9,7 @@
 #include <QTcpSocket>
 #include <QListWidgetItem>
 
-#include "../proto/client.pb.h"
+#include "../proto/hackmessage.pb.h"
 
 namespace Ui {
 class hackserver;
@@ -37,7 +37,7 @@ private:
     int client_number = 0;
     std::map<int, QTcpSocket*> clients_map;
     void send_everyone_new(int id);
-
+    void send_everyone_disconnected(int id);
 };
 
 #endif // HACKSERVER_H

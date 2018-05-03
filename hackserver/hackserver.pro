@@ -17,9 +17,9 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
         hackserver.cpp \
-        ../proto/client.pb.cc
+        ../proto/hackmessage.pb.cc
 
 HEADERS  += hackserver.h \
-          ../proto/client.pb.h
+          ../proto/hackmessage.pb.h
 
 FORMS    += hackserver.ui

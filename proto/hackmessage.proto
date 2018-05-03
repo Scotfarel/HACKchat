@@ -1,0 +1,18 @@
+syntax = "proto3";
+package hackchat;
+
+message TextMsg {
+	string msg_text = 3;
+	bool is_feature = 4;
+}
+
+message StatusMsg {
+	bool connected = 3;
+	int32 connected_id = 4;
+}
+
+message Package {
+	int32 sender_id = 1;
+	int32 host_id = 2;
+	oneof msg { TextMsg text = 3; StatusMsg status = 4; }
+}
