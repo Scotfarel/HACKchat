@@ -27,42 +27,35 @@ void hackserver::connect_new() {
     QTcpSocket* sock = tcpServ->nextPendingConnection();
     connect(sock, SIGNAL(readyRead()), this, SLOT(read()));
     connect(sock, SIGNAL(disconnected()), this, SLOT(disconnect()));
-    /*Package msg;
-    msg.set_sender_id(-1);
-    msg.set_host_id(client_number);
-    StatusMsg* status = new StatusMsg;
-    status->set_connected(true);
-    msg.set_allocated_status(status);
-    for (auto it = clients_map.begin(); it != clients_map.end(); ++it) {
-            status->set_connected_id(it->first);
-            QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
-            sock->write(f_message);
-            qDebug() << "sended" << msg.status().connected_id() << "to" << client_number << "can u" << f_message;
-    }*/
 }
 
-void hackserver::send_everyone_new(int id) {
-    Package msg;
-    msg.set_sender_id(-1);
+void hackserver::send_everyone_new(int id, std::string login) {
+    PackageList list;
+    Package* msg = list.add_pack();
+    msg->set_sender_id(-1);
     StatusMsg* status = new StatusMsg;
     status->set_connected(true);
     status->set_connected_id(id);
-    msg.set_allocated_status(status);
-    QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
+    status->set_connected_login(login);
+    msg->set_allocated_status(status);
     for (std::pair<int const, QTcpSocket*>& c : clients_map) {
+        msg->set_host_id(c.first);
+        QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
         c.second->write(f_message, f_message.size());
     }
 }
 
 void hackserver::send_everyone_disconnected(int id) {
-    Package msg;
-    msg.set_sender_id(-1);
+    PackageList list;
+    Package* msg = list.add_pack();
+    msg->set_sender_id(-1);
     StatusMsg* status = new StatusMsg;
     status->set_connected(false);
     status->set_connected_id(id);
-    msg.set_allocated_status(status);
-    QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
+    msg->set_allocated_status(status);
     for (std::pair<int const, QTcpSocket*>& c : clients_map) {
+        msg->set_host_id(c.first);
+        QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
         c.second->write(f_message, f_message.size());
     }
 }
@@ -72,27 +65,28 @@ void hackserver::read() {
     QByteArray buffer;
     buffer.resize(client->bytesAvailable());
     client->read(buffer.data(), buffer.size());
-    Package msg;
+    PackageList msg;
     if (!msg.ParseFromArray(buffer, buffer.size())) {
       qDebug() << "Failed to parse message.";
     }
-    std::string text = std::to_string(msg.sender_id());
-    text.append(" : ");
-    text.append(msg.text().msg_text());
-    qDebug() << "msg u mean:" << QString::fromStdString(text);
-    ui->plainTextEdit->appendPlainText(QString::fromStdString(text));
-    if (msg.host_id() != -1) {
-        auto need_to = clients_map.find(msg.host_id());
-        need_to->second->write(buffer);
-    }
-    if (msg.sender_id() == 0) {
-        if (auth(msg, client)) {
-            client_number++;
+    for (const Package& p : msg.pack()) {
+        std::string text = std::to_string(p.sender_id());
+        text.append(" : ");
+        text.append(p.text().msg_text());
+        ui->plainTextEdit->appendPlainText(QString::fromStdString(text));
+        if (p.host_id() != -1) {
+            auto need_to = clients_map.find(p.host_id());
+            need_to->second->write(buffer);
+        }
+        if (p.sender_id() == 0) {
+            if (auth(p, client)) {
+                client_number++;
+            }
         }
     }
 }
 
-bool hackserver::auth(Package& msg, QTcpSocket* user) {
+bool hackserver::auth(const Package& msg, QTcpSocket* user) {
     QStringList info = QString::fromStdString(msg.text().msg_text()).split(' ', QString::SkipEmptyParts);
     QString login = info.at(0);
     QString password = info.at(1);
@@ -104,20 +98,43 @@ bool hackserver::auth(Package& msg, QTcpSocket* user) {
         qDebug() << query.lastError().text();
         return false;
     }
-    Package answer;
-    answer.set_sender_id(-1);
+
+    PackageList online_list;
+    Package* answer = online_list.add_pack();
+    answer->set_sender_id(-1);
+
     if (!query.next()) {
-        answer.set_host_id(0);
-        QByteArray f_message(answer.SerializeAsString().c_str(), answer.ByteSize());
+        answer->set_host_id(0);
+        QByteArray f_message(online_list.SerializeAsString().c_str(), online_list.ByteSize());
         user->write(f_message);
         return false;
     }
     int user_id = query.value("user_id").toInt();
-
-    answer.set_host_id(user_id);
-    QByteArray f_message(answer.SerializeAsString().c_str(), answer.ByteSize());
+    answer->set_host_id(user_id);
+    for (auto it = clients_map.begin(); it != clients_map.end(); ++it) {
+        Package* user_online = online_list.add_pack();
+        user_online->set_sender_id(-1);
+        user_online->set_host_id(user_id);
+        StatusMsg* online_user = new StatusMsg;
+        online_user->set_connected(true);
+        QSqlQuery login_online;
+        login_online.prepare("SELECT * FROM user WHERE user_id = ?");
+        login_online.bindValue(0, it->first);
+        if (!login_online.exec()) {
+            qDebug() << login_online.lastError().text();
+            return false;
+        }
+        if (!login_online.next()) {
+            qDebug() << "User not found!";
+            continue;
+        }
+        online_user->set_connected_id(it->first);
+        online_user->set_connected_login(login_online.value("login").toString().toStdString());
+        user_online->set_allocated_status(online_user);
+    }
+    QByteArray f_message(online_list.SerializeAsString().c_str(), online_list.ByteSize());
     user->write(f_message);
-    send_everyone_new(user_id);
+    send_everyone_new(user_id, login.toStdString());
     clients_map.emplace(user_id, user);
     ui->users->addItem(QString::number(user_id));
     return true;

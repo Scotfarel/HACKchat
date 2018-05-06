@@ -36,7 +36,7 @@ namespace protobuf_hackmessage_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[3];
+  static const ::google::protobuf::internal::ParseTable schema[4];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -48,16 +48,22 @@ void InitDefaultsStatusMsgImpl();
 void InitDefaultsStatusMsg();
 void InitDefaultsPackageImpl();
 void InitDefaultsPackage();
+void InitDefaultsPackageListImpl();
+void InitDefaultsPackageList();
 inline void InitDefaults() {
   InitDefaultsTextMsg();
   InitDefaultsStatusMsg();
   InitDefaultsPackage();
+  InitDefaultsPackageList();
 }
 }  // namespace protobuf_hackmessage_2eproto
 namespace hackchat {
 class Package;
 class PackageDefaultTypeInternal;
 extern PackageDefaultTypeInternal _Package_default_instance_;
+class PackageList;
+class PackageListDefaultTypeInternal;
+extern PackageListDefaultTypeInternal _PackageList_default_instance_;
 class StatusMsg;
 class StatusMsgDefaultTypeInternal;
 extern StatusMsgDefaultTypeInternal _StatusMsg_default_instance_;
@@ -265,6 +271,20 @@ class StatusMsg : public ::google::protobuf::Message /* @@protoc_insertion_point
 
   // accessors -------------------------------------------------------
 
+  // string connected_login = 5;
+  void clear_connected_login();
+  static const int kConnectedLoginFieldNumber = 5;
+  const ::std::string& connected_login() const;
+  void set_connected_login(const ::std::string& value);
+  #if LANG_CXX11
+  void set_connected_login(::std::string&& value);
+  #endif
+  void set_connected_login(const char* value);
+  void set_connected_login(const char* value, size_t size);
+  ::std::string* mutable_connected_login();
+  ::std::string* release_connected_login();
+  void set_allocated_connected_login(::std::string* connected_login);
+
   // bool connected = 3;
   void clear_connected();
   static const int kConnectedFieldNumber = 3;
@@ -281,6 +301,7 @@ class StatusMsg : public ::google::protobuf::Message /* @@protoc_insertion_point
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr connected_login_;
   bool connected_;
   ::google::protobuf::int32 connected_id_;
   mutable int _cached_size_;
@@ -431,6 +452,111 @@ class Package : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   friend struct ::protobuf_hackmessage_2eproto::TableStruct;
   friend void ::protobuf_hackmessage_2eproto::InitDefaultsPackageImpl();
 };
+// -------------------------------------------------------------------
+
+class PackageList : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:hackchat.PackageList) */ {
+ public:
+  PackageList();
+  virtual ~PackageList();
+
+  PackageList(const PackageList& from);
+
+  inline PackageList& operator=(const PackageList& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  PackageList(PackageList&& from) noexcept
+    : PackageList() {
+    *this = ::std::move(from);
+  }
+
+  inline PackageList& operator=(PackageList&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const PackageList& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const PackageList* internal_default_instance() {
+    return reinterpret_cast<const PackageList*>(
+               &_PackageList_default_instance_);
+  }
+  static PROTOBUF_CONSTEXPR int const kIndexInFileMessages =
+    3;
+
+  void Swap(PackageList* other);
+  friend void swap(PackageList& a, PackageList& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline PackageList* New() const PROTOBUF_FINAL { return New(NULL); }
+
+  PackageList* New(::google::protobuf::Arena* arena) const PROTOBUF_FINAL;
+  void CopyFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void MergeFrom(const ::google::protobuf::Message& from) PROTOBUF_FINAL;
+  void CopyFrom(const PackageList& from);
+  void MergeFrom(const PackageList& from);
+  void Clear() PROTOBUF_FINAL;
+  bool IsInitialized() const PROTOBUF_FINAL;
+
+  size_t ByteSizeLong() const PROTOBUF_FINAL;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) PROTOBUF_FINAL;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const PROTOBUF_FINAL;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const PROTOBUF_FINAL;
+  int GetCachedSize() const PROTOBUF_FINAL { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const PROTOBUF_FINAL;
+  void InternalSwap(PackageList* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const PROTOBUF_FINAL;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .hackchat.Package pack = 1;
+  int pack_size() const;
+  void clear_pack();
+  static const int kPackFieldNumber = 1;
+  const ::hackchat::Package& pack(int index) const;
+  ::hackchat::Package* mutable_pack(int index);
+  ::hackchat::Package* add_pack();
+  ::google::protobuf::RepeatedPtrField< ::hackchat::Package >*
+      mutable_pack();
+  const ::google::protobuf::RepeatedPtrField< ::hackchat::Package >&
+      pack() const;
+
+  // @@protoc_insertion_point(class_scope:hackchat.PackageList)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::hackchat::Package > pack_;
+  mutable int _cached_size_;
+  friend struct ::protobuf_hackmessage_2eproto::TableStruct;
+  friend void ::protobuf_hackmessage_2eproto::InitDefaultsPackageListImpl();
+};
 // ===================================================================
 
 
@@ -539,6 +665,59 @@ inline void StatusMsg::set_connected_id(::google::protobuf::int32 value) {
   
   connected_id_ = value;
   // @@protoc_insertion_point(field_set:hackchat.StatusMsg.connected_id)
+}
+
+// string connected_login = 5;
+inline void StatusMsg::clear_connected_login() {
+  connected_login_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& StatusMsg::connected_login() const {
+  // @@protoc_insertion_point(field_get:hackchat.StatusMsg.connected_login)
+  return connected_login_.GetNoArena();
+}
+inline void StatusMsg::set_connected_login(const ::std::string& value) {
+  
+  connected_login_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:hackchat.StatusMsg.connected_login)
+}
+#if LANG_CXX11
+inline void StatusMsg::set_connected_login(::std::string&& value) {
+  
+  connected_login_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:hackchat.StatusMsg.connected_login)
+}
+#endif
+inline void StatusMsg::set_connected_login(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  connected_login_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:hackchat.StatusMsg.connected_login)
+}
+inline void StatusMsg::set_connected_login(const char* value, size_t size) {
+  
+  connected_login_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:hackchat.StatusMsg.connected_login)
+}
+inline ::std::string* StatusMsg::mutable_connected_login() {
+  
+  // @@protoc_insertion_point(field_mutable:hackchat.StatusMsg.connected_login)
+  return connected_login_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* StatusMsg::release_connected_login() {
+  // @@protoc_insertion_point(field_release:hackchat.StatusMsg.connected_login)
+  
+  return connected_login_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void StatusMsg::set_allocated_connected_login(::std::string* connected_login) {
+  if (connected_login != NULL) {
+    
+  } else {
+    
+  }
+  connected_login_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), connected_login);
+  // @@protoc_insertion_point(field_set_allocated:hackchat.StatusMsg.connected_login)
 }
 
 // -------------------------------------------------------------------
@@ -662,9 +841,45 @@ inline void Package::clear_has_msg() {
 inline Package::MsgCase Package::msg_case() const {
   return Package::MsgCase(_oneof_case_[0]);
 }
+// -------------------------------------------------------------------
+
+// PackageList
+
+// repeated .hackchat.Package pack = 1;
+inline int PackageList::pack_size() const {
+  return pack_.size();
+}
+inline void PackageList::clear_pack() {
+  pack_.Clear();
+}
+inline const ::hackchat::Package& PackageList::pack(int index) const {
+  // @@protoc_insertion_point(field_get:hackchat.PackageList.pack)
+  return pack_.Get(index);
+}
+inline ::hackchat::Package* PackageList::mutable_pack(int index) {
+  // @@protoc_insertion_point(field_mutable:hackchat.PackageList.pack)
+  return pack_.Mutable(index);
+}
+inline ::hackchat::Package* PackageList::add_pack() {
+  // @@protoc_insertion_point(field_add:hackchat.PackageList.pack)
+  return pack_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::hackchat::Package >*
+PackageList::mutable_pack() {
+  // @@protoc_insertion_point(field_mutable_list:hackchat.PackageList.pack)
+  return &pack_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::hackchat::Package >&
+PackageList::pack() const {
+  // @@protoc_insertion_point(field_list:hackchat.PackageList.pack)
+  return pack_;
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

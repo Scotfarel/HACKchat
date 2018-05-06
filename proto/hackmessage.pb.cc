@@ -37,6 +37,11 @@ class PackageDefaultTypeInternal {
   const ::hackchat::TextMsg* text_;
   const ::hackchat::StatusMsg* status_;
 } _Package_default_instance_;
+class PackageListDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<PackageList>
+      _instance;
+} _PackageList_default_instance_;
 }  // namespace hackchat
 namespace protobuf_hackmessage_2eproto {
 void InitDefaultsTextMsgImpl() {
@@ -104,7 +109,29 @@ void InitDefaultsPackage() {
   ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsPackageImpl);
 }
 
-::google::protobuf::Metadata file_level_metadata[3];
+void InitDefaultsPackageListImpl() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+#ifdef GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  ::google::protobuf::internal::InitProtobufDefaultsForceUnique();
+#else
+  ::google::protobuf::internal::InitProtobufDefaults();
+#endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  protobuf_hackmessage_2eproto::InitDefaultsPackage();
+  {
+    void* ptr = &::hackchat::_PackageList_default_instance_;
+    new (ptr) ::hackchat::PackageList();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::hackchat::PackageList::InitAsDefaultInstance();
+}
+
+void InitDefaultsPackageList() {
+  static GOOGLE_PROTOBUF_DECLARE_ONCE(once);
+  ::google::protobuf::GoogleOnceInit(&once, &InitDefaultsPackageListImpl);
+}
+
+::google::protobuf::Metadata file_level_metadata[4];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
@@ -121,6 +148,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::StatusMsg, connected_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::StatusMsg, connected_id_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::StatusMsg, connected_login_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::Package, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -131,17 +159,25 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   offsetof(::hackchat::PackageDefaultTypeInternal, text_),
   offsetof(::hackchat::PackageDefaultTypeInternal, status_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::Package, msg_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::PackageList, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::PackageList, pack_),
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::hackchat::TextMsg)},
   { 7, -1, sizeof(::hackchat::StatusMsg)},
-  { 14, -1, sizeof(::hackchat::Package)},
+  { 15, -1, sizeof(::hackchat::Package)},
+  { 25, -1, sizeof(::hackchat::PackageList)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::hackchat::_TextMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::hackchat::_StatusMsg_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::hackchat::_Package_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::hackchat::_PackageList_default_instance_),
 };
 
 void protobuf_AssignDescriptors() {
@@ -160,22 +196,24 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 3);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 4);
 }
 
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\021hackmessage.proto\022\010hackchat\"/\n\007TextMsg"
-      "\022\020\n\010msg_text\030\003 \001(\t\022\022\n\nis_feature\030\004 \001(\010\"4"
+      "\022\020\n\010msg_text\030\003 \001(\t\022\022\n\nis_feature\030\004 \001(\010\"M"
       "\n\tStatusMsg\022\021\n\tconnected\030\003 \001(\010\022\024\n\014connec"
-      "ted_id\030\004 \001(\005\"~\n\007Package\022\021\n\tsender_id\030\001 \001"
-      "(\005\022\017\n\007host_id\030\002 \001(\005\022!\n\004text\030\003 \001(\0132\021.hack"
-      "chat.TextMsgH\000\022%\n\006status\030\004 \001(\0132\023.hackcha"
-      "t.StatusMsgH\000B\005\n\003msgb\006proto3"
+      "ted_id\030\004 \001(\005\022\027\n\017connected_login\030\005 \001(\t\"~\n"
+      "\007Package\022\021\n\tsender_id\030\001 \001(\005\022\017\n\007host_id\030\002"
+      " \001(\005\022!\n\004text\030\003 \001(\0132\021.hackchat.TextMsgH\000\022"
+      "%\n\006status\030\004 \001(\0132\023.hackchat.StatusMsgH\000B\005"
+      "\n\003msg\".\n\013PackageList\022\037\n\004pack\030\001 \003(\0132\021.hac"
+      "kchat.Packageb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 268);
+      descriptor, 341);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "hackmessage.proto", &protobuf_RegisterTypes);
 }
@@ -493,6 +531,7 @@ void StatusMsg::InitAsDefaultInstance() {
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int StatusMsg::kConnectedFieldNumber;
 const int StatusMsg::kConnectedIdFieldNumber;
+const int StatusMsg::kConnectedLoginFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 StatusMsg::StatusMsg()
@@ -508,6 +547,10 @@ StatusMsg::StatusMsg(const StatusMsg& from)
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
+  connected_login_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.connected_login().size() > 0) {
+    connected_login_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.connected_login_);
+  }
   ::memcpy(&connected_, &from.connected_,
     static_cast<size_t>(reinterpret_cast<char*>(&connected_id_) -
     reinterpret_cast<char*>(&connected_)) + sizeof(connected_id_));
@@ -515,6 +558,7 @@ StatusMsg::StatusMsg(const StatusMsg& from)
 }
 
 void StatusMsg::SharedCtor() {
+  connected_login_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&connected_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&connected_id_) -
       reinterpret_cast<char*>(&connected_)) + sizeof(connected_id_));
@@ -527,6 +571,7 @@ StatusMsg::~StatusMsg() {
 }
 
 void StatusMsg::SharedDtor() {
+  connected_login_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void StatusMsg::SetCachedSize(int size) const {
@@ -558,6 +603,7 @@ void StatusMsg::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  connected_login_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&connected_, 0, static_cast<size_t>(
       reinterpret_cast<char*>(&connected_id_) -
       reinterpret_cast<char*>(&connected_)) + sizeof(connected_id_));
@@ -602,6 +648,22 @@ bool StatusMsg::MergePartialFromCodedStream(
         break;
       }
 
+      // string connected_login = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_connected_login()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->connected_login().data(), static_cast<int>(this->connected_login().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "hackchat.StatusMsg.connected_login"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0) {
@@ -638,6 +700,16 @@ void StatusMsg::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->connected_id(), output);
   }
 
+  // string connected_login = 5;
+  if (this->connected_login().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->connected_login().data(), static_cast<int>(this->connected_login().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hackchat.StatusMsg.connected_login");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      5, this->connected_login(), output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -662,6 +734,17 @@ void StatusMsg::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->connected_id(), target);
   }
 
+  // string connected_login = 5;
+  if (this->connected_login().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->connected_login().data(), static_cast<int>(this->connected_login().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hackchat.StatusMsg.connected_login");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        5, this->connected_login(), target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -679,6 +762,13 @@ size_t StatusMsg::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
+  // string connected_login = 5;
+  if (this->connected_login().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->connected_login());
+  }
+
   // bool connected = 3;
   if (this->connected() != 0) {
     total_size += 1 + 1;
@@ -720,6 +810,10 @@ void StatusMsg::MergeFrom(const StatusMsg& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (from.connected_login().size() > 0) {
+
+    connected_login_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.connected_login_);
+  }
   if (from.connected() != 0) {
     set_connected(from.connected());
   }
@@ -752,6 +846,7 @@ void StatusMsg::Swap(StatusMsg* other) {
 }
 void StatusMsg::InternalSwap(StatusMsg* other) {
   using std::swap;
+  connected_login_.Swap(&other->connected_login_);
   swap(connected_, other->connected_);
   swap(connected_id_, other->connected_id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
@@ -1195,6 +1290,247 @@ void Package::InternalSwap(Package* other) {
 }
 
 ::google::protobuf::Metadata Package::GetMetadata() const {
+  protobuf_hackmessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_hackmessage_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void PackageList::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int PackageList::kPackFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+PackageList::PackageList()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  if (GOOGLE_PREDICT_TRUE(this != internal_default_instance())) {
+    ::protobuf_hackmessage_2eproto::InitDefaultsPackageList();
+  }
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:hackchat.PackageList)
+}
+PackageList::PackageList(const PackageList& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      pack_(from.pack_),
+      _cached_size_(0) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:hackchat.PackageList)
+}
+
+void PackageList::SharedCtor() {
+  _cached_size_ = 0;
+}
+
+PackageList::~PackageList() {
+  // @@protoc_insertion_point(destructor:hackchat.PackageList)
+  SharedDtor();
+}
+
+void PackageList::SharedDtor() {
+}
+
+void PackageList::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* PackageList::descriptor() {
+  ::protobuf_hackmessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_hackmessage_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const PackageList& PackageList::default_instance() {
+  ::protobuf_hackmessage_2eproto::InitDefaultsPackageList();
+  return *internal_default_instance();
+}
+
+PackageList* PackageList::New(::google::protobuf::Arena* arena) const {
+  PackageList* n = new PackageList;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void PackageList::Clear() {
+// @@protoc_insertion_point(message_clear_start:hackchat.PackageList)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  pack_.Clear();
+  _internal_metadata_.Clear();
+}
+
+bool PackageList::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:hackchat.PackageList)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .hackchat.Package pack = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(input, add_pack()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:hackchat.PackageList)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:hackchat.PackageList)
+  return false;
+#undef DO_
+}
+
+void PackageList::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:hackchat.PackageList)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .hackchat.Package pack = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->pack_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->pack(static_cast<int>(i)), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:hackchat.PackageList)
+}
+
+::google::protobuf::uint8* PackageList::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:hackchat.PackageList)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .hackchat.Package pack = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->pack_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        1, this->pack(static_cast<int>(i)), deterministic, target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:hackchat.PackageList)
+  return target;
+}
+
+size_t PackageList::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:hackchat.PackageList)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // repeated .hackchat.Package pack = 1;
+  {
+    unsigned int count = static_cast<unsigned int>(this->pack_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->pack(static_cast<int>(i)));
+    }
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = cached_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void PackageList::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:hackchat.PackageList)
+  GOOGLE_DCHECK_NE(&from, this);
+  const PackageList* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const PackageList>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:hackchat.PackageList)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:hackchat.PackageList)
+    MergeFrom(*source);
+  }
+}
+
+void PackageList::MergeFrom(const PackageList& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:hackchat.PackageList)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  pack_.MergeFrom(from.pack_);
+}
+
+void PackageList::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:hackchat.PackageList)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void PackageList::CopyFrom(const PackageList& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:hackchat.PackageList)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool PackageList::IsInitialized() const {
+  return true;
+}
+
+void PackageList::Swap(PackageList* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void PackageList::InternalSwap(PackageList* other) {
+  using std::swap;
+  pack_.InternalSwap(&other->pack_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata PackageList::GetMetadata() const {
   protobuf_hackmessage_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_hackmessage_2eproto::file_level_metadata[kIndexInFileMessages];
 }

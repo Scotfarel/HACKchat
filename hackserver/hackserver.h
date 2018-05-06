@@ -16,6 +16,7 @@
 using hackchat::Package;
 using hackchat::TextMsg;
 using hackchat::StatusMsg;
+using hackchat::PackageList;
 
 namespace Ui {
 class hackserver;
@@ -43,8 +44,10 @@ private:
     QSqlDatabase db;
     int client_number = 1;
     std::map<int, QTcpSocket*> clients_map;
-    void send_everyone_new(int id);
+    void send_everyone_new(int id, std::string login);
     void send_everyone_disconnected(int id);
-    bool auth(Package& msg, QTcpSocket* user);};
+    bool auth(const Package& msg, QTcpSocket* user);
+
+};
 
 #endif // HACKSERVER_H

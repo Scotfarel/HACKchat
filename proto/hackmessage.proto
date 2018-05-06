@@ -9,6 +9,7 @@ message TextMsg {
 message StatusMsg {
 	bool connected = 3;
 	int32 connected_id = 4;
+	string connected_login = 5;
 }
 
 message Package {
@@ -16,3 +17,8 @@ message Package {
 	int32 host_id = 2;
 	oneof msg { TextMsg text = 3; StatusMsg status = 4; }
 }
+
+message PackageList {
+	repeated Package pack = 1;
+}
+

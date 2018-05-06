@@ -10,6 +10,7 @@
 using hackchat::Package;
 using hackchat::TextMsg;
 using hackchat::StatusMsg;
+using hackchat::PackageList;
 
 namespace Ui {
 class Client;
@@ -29,7 +30,7 @@ public slots:
 private:
     Ui::Client *ui;
     QTcpSocket *tcpSock;
-    QList<int> users_online;
+    QMap<int, QString> users_online;
     QString nickname;
     bool first_connect = false; // i will change it
     int id;
@@ -39,8 +40,9 @@ private slots:
     void on_pushButton_clicked();
     void on_lineEdit_textEdited(const QString &arg1);
     void on_pushButton_2_pressed();
-    void on_nickname_line_textEdited(const QString &arg1);
-    void on_password_line_textEdited(const QString &arg1);
+    void on_nickname_line_textEdited();
+    void on_password_line_textEdited();
+    void on_lineEdit_returnPressed();
 };
 
 #endif // CLIENT_H
