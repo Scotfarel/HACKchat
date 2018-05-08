@@ -43,6 +43,7 @@ private slots:
     void on_nickname_line_textEdited();
     void on_password_line_textEdited();
     void on_lineEdit_returnPressed();
+    void on_pushButton_3_released();
 };
 
 #endif // CLIENT_H

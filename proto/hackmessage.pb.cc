@@ -34,8 +34,8 @@ class PackageDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<Package>
       _instance;
-  const ::hackchat::TextMsg* text_;
-  const ::hackchat::StatusMsg* status_;
+  const ::hackchat::TextMsg* text_msg_;
+  const ::hackchat::StatusMsg* status_msg_;
 } _Package_default_instance_;
 class PackageListDefaultTypeInternal {
  public:
@@ -132,6 +132,7 @@ void InitDefaultsPackageList() {
 }
 
 ::google::protobuf::Metadata file_level_metadata[4];
+const ::google::protobuf::EnumDescriptor* file_level_enum_descriptors[1];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
@@ -146,9 +147,10 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::StatusMsg, connected_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::StatusMsg, connected_id_),
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::StatusMsg, connected_login_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::StatusMsg, status_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::StatusMsg, user_id_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::StatusMsg, user_login_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::StatusMsg, user_pass_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::Package, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -156,8 +158,8 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::Package, sender_id_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::Package, host_id_),
-  offsetof(::hackchat::PackageDefaultTypeInternal, text_),
-  offsetof(::hackchat::PackageDefaultTypeInternal, status_),
+  offsetof(::hackchat::PackageDefaultTypeInternal, text_msg_),
+  offsetof(::hackchat::PackageDefaultTypeInternal, status_msg_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::Package, msg_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::PackageList, _internal_metadata_),
@@ -169,8 +171,8 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::hackchat::TextMsg)},
   { 7, -1, sizeof(::hackchat::StatusMsg)},
-  { 15, -1, sizeof(::hackchat::Package)},
-  { 25, -1, sizeof(::hackchat::PackageList)},
+  { 16, -1, sizeof(::hackchat::Package)},
+  { 26, -1, sizeof(::hackchat::PackageList)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -185,7 +187,7 @@ void protobuf_AssignDescriptors() {
   ::google::protobuf::MessageFactory* factory = NULL;
   AssignDescriptors(
       "hackmessage.proto", schemas, file_default_instances, TableStruct::offsets, factory,
-      file_level_metadata, NULL, NULL);
+      file_level_metadata, file_level_enum_descriptors, NULL);
 }
 
 void protobuf_AssignDescriptorsOnce() {
@@ -203,17 +205,21 @@ void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
       "\n\021hackmessage.proto\022\010hackchat\"/\n\007TextMsg"
-      "\022\020\n\010msg_text\030\003 \001(\t\022\022\n\nis_feature\030\004 \001(\010\"M"
-      "\n\tStatusMsg\022\021\n\tconnected\030\003 \001(\010\022\024\n\014connec"
-      "ted_id\030\004 \001(\005\022\027\n\017connected_login\030\005 \001(\t\"~\n"
-      "\007Package\022\021\n\tsender_id\030\001 \001(\005\022\017\n\007host_id\030\002"
-      " \001(\005\022!\n\004text\030\003 \001(\0132\021.hackchat.TextMsgH\000\022"
-      "%\n\006status\030\004 \001(\0132\023.hackchat.StatusMsgH\000B\005"
-      "\n\003msg\".\n\013PackageList\022\037\n\004pack\030\001 \003(\0132\021.hac"
-      "kchat.Packageb\006proto3"
+      "\022\020\n\010msg_text\030\001 \001(\t\022\022\n\nis_feature\030\002 \001(\010\"\337"
+      "\001\n\tStatusMsg\022*\n\006status\030\001 \001(\0162\032.hackchat."
+      "StatusMsg.Status\022\017\n\007user_id\030\002 \001(\005\022\022\n\nuse"
+      "r_login\030\003 \001(\t\022\021\n\tuser_pass\030\004 \001(\t\"n\n\006Stat"
+      "us\022\020\n\014AUTH_SUCCESS\020\000\022\016\n\nWRONG_PASS\020\001\022\023\n\017"
+      "LOGIN_NOT_FOUND\020\002\022\r\n\tCONNECTED\020\003\022\020\n\014DISC"
+      "ONNECTED\020\004\022\014\n\010NEW_USER\020\005\"\206\001\n\007Package\022\021\n\t"
+      "sender_id\030\001 \001(\005\022\017\n\007host_id\030\002 \001(\005\022%\n\010text"
+      "_msg\030\003 \001(\0132\021.hackchat.TextMsgH\000\022)\n\nstatu"
+      "s_msg\030\004 \001(\0132\023.hackchat.StatusMsgH\000B\005\n\003ms"
+      "g\".\n\013PackageList\022\037\n\004pack\030\001 \003(\0132\021.hackcha"
+      "t.Packageb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 341);
+      descriptor, 497);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "hackmessage.proto", &protobuf_RegisterTypes);
 }
@@ -230,6 +236,35 @@ struct StaticDescriptorInitializer {
 } static_descriptor_initializer;
 }  // namespace protobuf_hackmessage_2eproto
 namespace hackchat {
+const ::google::protobuf::EnumDescriptor* StatusMsg_Status_descriptor() {
+  protobuf_hackmessage_2eproto::protobuf_AssignDescriptorsOnce();
+  return protobuf_hackmessage_2eproto::file_level_enum_descriptors[0];
+}
+bool StatusMsg_Status_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const StatusMsg_Status StatusMsg::AUTH_SUCCESS;
+const StatusMsg_Status StatusMsg::WRONG_PASS;
+const StatusMsg_Status StatusMsg::LOGIN_NOT_FOUND;
+const StatusMsg_Status StatusMsg::CONNECTED;
+const StatusMsg_Status StatusMsg::DISCONNECTED;
+const StatusMsg_Status StatusMsg::NEW_USER;
+const StatusMsg_Status StatusMsg::Status_MIN;
+const StatusMsg_Status StatusMsg::Status_MAX;
+const int StatusMsg::Status_ARRAYSIZE;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 // ===================================================================
 
@@ -320,10 +355,10 @@ bool TextMsg::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string msg_text = 3;
-      case 3: {
+      // string msg_text = 1;
+      case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_msg_text()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -336,10 +371,10 @@ bool TextMsg::MergePartialFromCodedStream(
         break;
       }
 
-      // bool is_feature = 4;
-      case 4: {
+      // bool is_feature = 2;
+      case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
@@ -376,19 +411,19 @@ void TextMsg::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string msg_text = 3;
+  // string msg_text = 1;
   if (this->msg_text().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->msg_text().data(), static_cast<int>(this->msg_text().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "hackchat.TextMsg.msg_text");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->msg_text(), output);
+      1, this->msg_text(), output);
   }
 
-  // bool is_feature = 4;
+  // bool is_feature = 2;
   if (this->is_feature() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->is_feature(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->is_feature(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -405,7 +440,7 @@ void TextMsg::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string msg_text = 3;
+  // string msg_text = 1;
   if (this->msg_text().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->msg_text().data(), static_cast<int>(this->msg_text().length()),
@@ -413,12 +448,12 @@ void TextMsg::SerializeWithCachedSizes(
       "hackchat.TextMsg.msg_text");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->msg_text(), target);
+        1, this->msg_text(), target);
   }
 
-  // bool is_feature = 4;
+  // bool is_feature = 2;
   if (this->is_feature() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->is_feature(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->is_feature(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -438,14 +473,14 @@ size_t TextMsg::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // string msg_text = 3;
+  // string msg_text = 1;
   if (this->msg_text().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->msg_text());
   }
 
-  // bool is_feature = 4;
+  // bool is_feature = 2;
   if (this->is_feature() != 0) {
     total_size += 1 + 1;
   }
@@ -529,9 +564,10 @@ void TextMsg::InternalSwap(TextMsg* other) {
 void StatusMsg::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int StatusMsg::kConnectedFieldNumber;
-const int StatusMsg::kConnectedIdFieldNumber;
-const int StatusMsg::kConnectedLoginFieldNumber;
+const int StatusMsg::kStatusFieldNumber;
+const int StatusMsg::kUserIdFieldNumber;
+const int StatusMsg::kUserLoginFieldNumber;
+const int StatusMsg::kUserPassFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 StatusMsg::StatusMsg()
@@ -547,21 +583,26 @@ StatusMsg::StatusMsg(const StatusMsg& from)
       _internal_metadata_(NULL),
       _cached_size_(0) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  connected_login_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.connected_login().size() > 0) {
-    connected_login_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.connected_login_);
+  user_login_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.user_login().size() > 0) {
+    user_login_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.user_login_);
   }
-  ::memcpy(&connected_, &from.connected_,
-    static_cast<size_t>(reinterpret_cast<char*>(&connected_id_) -
-    reinterpret_cast<char*>(&connected_)) + sizeof(connected_id_));
+  user_pass_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.user_pass().size() > 0) {
+    user_pass_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.user_pass_);
+  }
+  ::memcpy(&status_, &from.status_,
+    static_cast<size_t>(reinterpret_cast<char*>(&user_id_) -
+    reinterpret_cast<char*>(&status_)) + sizeof(user_id_));
   // @@protoc_insertion_point(copy_constructor:hackchat.StatusMsg)
 }
 
 void StatusMsg::SharedCtor() {
-  connected_login_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&connected_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&connected_id_) -
-      reinterpret_cast<char*>(&connected_)) + sizeof(connected_id_));
+  user_login_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  user_pass_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&status_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&user_id_) -
+      reinterpret_cast<char*>(&status_)) + sizeof(user_id_));
   _cached_size_ = 0;
 }
 
@@ -571,7 +612,8 @@ StatusMsg::~StatusMsg() {
 }
 
 void StatusMsg::SharedDtor() {
-  connected_login_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  user_login_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  user_pass_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void StatusMsg::SetCachedSize(int size) const {
@@ -603,10 +645,11 @@ void StatusMsg::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  connected_login_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&connected_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&connected_id_) -
-      reinterpret_cast<char*>(&connected_)) + sizeof(connected_id_));
+  user_login_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  user_pass_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&status_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&user_id_) -
+      reinterpret_cast<char*>(&status_)) + sizeof(user_id_));
   _internal_metadata_.Clear();
 }
 
@@ -620,44 +663,61 @@ bool StatusMsg::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // bool connected = 3;
-      case 3: {
+      // .hackchat.StatusMsg.Status status = 1;
+      case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(24u /* 24 & 0xFF */)) {
-
+            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
+          int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &connected_)));
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          set_status(static_cast< ::hackchat::StatusMsg_Status >(value));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // int32 connected_id = 4;
-      case 4: {
+      // int32 user_id = 2;
+      case 2: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(32u /* 32 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(16u /* 16 & 0xFF */)) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &connected_id_)));
+                 input, &user_id_)));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // string connected_login = 5;
-      case 5: {
+      // string user_login = 3;
+      case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_connected_login()));
+                input, this->mutable_user_login()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->connected_login().data(), static_cast<int>(this->connected_login().length()),
+            this->user_login().data(), static_cast<int>(this->user_login().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "hackchat.StatusMsg.connected_login"));
+            "hackchat.StatusMsg.user_login"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string user_pass = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_user_pass()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->user_pass().data(), static_cast<int>(this->user_pass().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "hackchat.StatusMsg.user_pass"));
         } else {
           goto handle_unusual;
         }
@@ -690,24 +750,35 @@ void StatusMsg::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // bool connected = 3;
-  if (this->connected() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(3, this->connected(), output);
+  // .hackchat.StatusMsg.Status status = 1;
+  if (this->status() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->status(), output);
   }
 
-  // int32 connected_id = 4;
-  if (this->connected_id() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->connected_id(), output);
+  // int32 user_id = 2;
+  if (this->user_id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->user_id(), output);
   }
 
-  // string connected_login = 5;
-  if (this->connected_login().size() > 0) {
+  // string user_login = 3;
+  if (this->user_login().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->connected_login().data(), static_cast<int>(this->connected_login().length()),
+      this->user_login().data(), static_cast<int>(this->user_login().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "hackchat.StatusMsg.connected_login");
+      "hackchat.StatusMsg.user_login");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->connected_login(), output);
+      3, this->user_login(), output);
+  }
+
+  // string user_pass = 4;
+  if (this->user_pass().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->user_pass().data(), static_cast<int>(this->user_pass().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hackchat.StatusMsg.user_pass");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      4, this->user_pass(), output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -724,25 +795,37 @@ void StatusMsg::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // bool connected = 3;
-  if (this->connected() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(3, this->connected(), target);
+  // .hackchat.StatusMsg.Status status = 1;
+  if (this->status() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->status(), target);
   }
 
-  // int32 connected_id = 4;
-  if (this->connected_id() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->connected_id(), target);
+  // int32 user_id = 2;
+  if (this->user_id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->user_id(), target);
   }
 
-  // string connected_login = 5;
-  if (this->connected_login().size() > 0) {
+  // string user_login = 3;
+  if (this->user_login().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->connected_login().data(), static_cast<int>(this->connected_login().length()),
+      this->user_login().data(), static_cast<int>(this->user_login().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "hackchat.StatusMsg.connected_login");
+      "hackchat.StatusMsg.user_login");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->connected_login(), target);
+        3, this->user_login(), target);
+  }
+
+  // string user_pass = 4;
+  if (this->user_pass().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->user_pass().data(), static_cast<int>(this->user_pass().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "hackchat.StatusMsg.user_pass");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->user_pass(), target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -762,23 +845,31 @@ size_t StatusMsg::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // string connected_login = 5;
-  if (this->connected_login().size() > 0) {
+  // string user_login = 3;
+  if (this->user_login().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->connected_login());
+        this->user_login());
   }
 
-  // bool connected = 3;
-  if (this->connected() != 0) {
-    total_size += 1 + 1;
+  // string user_pass = 4;
+  if (this->user_pass().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->user_pass());
   }
 
-  // int32 connected_id = 4;
-  if (this->connected_id() != 0) {
+  // .hackchat.StatusMsg.Status status = 1;
+  if (this->status() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::EnumSize(this->status());
+  }
+
+  // int32 user_id = 2;
+  if (this->user_id() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::Int32Size(
-        this->connected_id());
+        this->user_id());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -810,15 +901,19 @@ void StatusMsg::MergeFrom(const StatusMsg& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.connected_login().size() > 0) {
+  if (from.user_login().size() > 0) {
 
-    connected_login_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.connected_login_);
+    user_login_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.user_login_);
   }
-  if (from.connected() != 0) {
-    set_connected(from.connected());
+  if (from.user_pass().size() > 0) {
+
+    user_pass_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.user_pass_);
   }
-  if (from.connected_id() != 0) {
-    set_connected_id(from.connected_id());
+  if (from.status() != 0) {
+    set_status(from.status());
+  }
+  if (from.user_id() != 0) {
+    set_user_id(from.user_id());
   }
 }
 
@@ -846,9 +941,10 @@ void StatusMsg::Swap(StatusMsg* other) {
 }
 void StatusMsg::InternalSwap(StatusMsg* other) {
   using std::swap;
-  connected_login_.Swap(&other->connected_login_);
-  swap(connected_, other->connected_);
-  swap(connected_id_, other->connected_id_);
+  user_login_.Swap(&other->user_login_);
+  user_pass_.Swap(&other->user_pass_);
+  swap(status_, other->status_);
+  swap(user_id_, other->user_id_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);
 }
@@ -862,44 +958,44 @@ void StatusMsg::InternalSwap(StatusMsg* other) {
 // ===================================================================
 
 void Package::InitAsDefaultInstance() {
-  ::hackchat::_Package_default_instance_.text_ = const_cast< ::hackchat::TextMsg*>(
+  ::hackchat::_Package_default_instance_.text_msg_ = const_cast< ::hackchat::TextMsg*>(
       ::hackchat::TextMsg::internal_default_instance());
-  ::hackchat::_Package_default_instance_.status_ = const_cast< ::hackchat::StatusMsg*>(
+  ::hackchat::_Package_default_instance_.status_msg_ = const_cast< ::hackchat::StatusMsg*>(
       ::hackchat::StatusMsg::internal_default_instance());
 }
-void Package::set_allocated_text(::hackchat::TextMsg* text) {
+void Package::set_allocated_text_msg(::hackchat::TextMsg* text_msg) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
-  if (text) {
+  if (text_msg) {
     ::google::protobuf::Arena* submessage_arena = NULL;
     if (message_arena != submessage_arena) {
-      text = ::google::protobuf::internal::GetOwnedMessage(
-          message_arena, text, submessage_arena);
+      text_msg = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, text_msg, submessage_arena);
     }
-    set_has_text();
-    msg_.text_ = text;
+    set_has_text_msg();
+    msg_.text_msg_ = text_msg;
   }
-  // @@protoc_insertion_point(field_set_allocated:hackchat.Package.text)
+  // @@protoc_insertion_point(field_set_allocated:hackchat.Package.text_msg)
 }
-void Package::set_allocated_status(::hackchat::StatusMsg* status) {
+void Package::set_allocated_status_msg(::hackchat::StatusMsg* status_msg) {
   ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
   clear_msg();
-  if (status) {
+  if (status_msg) {
     ::google::protobuf::Arena* submessage_arena = NULL;
     if (message_arena != submessage_arena) {
-      status = ::google::protobuf::internal::GetOwnedMessage(
-          message_arena, status, submessage_arena);
+      status_msg = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, status_msg, submessage_arena);
     }
-    set_has_status();
-    msg_.status_ = status;
+    set_has_status_msg();
+    msg_.status_msg_ = status_msg;
   }
-  // @@protoc_insertion_point(field_set_allocated:hackchat.Package.status)
+  // @@protoc_insertion_point(field_set_allocated:hackchat.Package.status_msg)
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int Package::kSenderIdFieldNumber;
 const int Package::kHostIdFieldNumber;
-const int Package::kTextFieldNumber;
-const int Package::kStatusFieldNumber;
+const int Package::kTextMsgFieldNumber;
+const int Package::kStatusMsgFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Package::Package()
@@ -920,12 +1016,12 @@ Package::Package(const Package& from)
     reinterpret_cast<char*>(&sender_id_)) + sizeof(host_id_));
   clear_has_msg();
   switch (from.msg_case()) {
-    case kText: {
-      mutable_text()->::hackchat::TextMsg::MergeFrom(from.text());
+    case kTextMsg: {
+      mutable_text_msg()->::hackchat::TextMsg::MergeFrom(from.text_msg());
       break;
     }
-    case kStatus: {
-      mutable_status()->::hackchat::StatusMsg::MergeFrom(from.status());
+    case kStatusMsg: {
+      mutable_status_msg()->::hackchat::StatusMsg::MergeFrom(from.status_msg());
       break;
     }
     case MSG_NOT_SET: {
@@ -980,12 +1076,12 @@ Package* Package::New(::google::protobuf::Arena* arena) const {
 void Package::clear_msg() {
 // @@protoc_insertion_point(one_of_clear_start:hackchat.Package)
   switch (msg_case()) {
-    case kText: {
-      delete msg_.text_;
+    case kTextMsg: {
+      delete msg_.text_msg_;
       break;
     }
-    case kStatus: {
-      delete msg_.status_;
+    case kStatusMsg: {
+      delete msg_.status_msg_;
       break;
     }
     case MSG_NOT_SET: {
@@ -1047,24 +1143,24 @@ bool Package::MergePartialFromCodedStream(
         break;
       }
 
-      // .hackchat.TextMsg text = 3;
+      // .hackchat.TextMsg text_msg = 3;
       case 3: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-               input, mutable_text()));
+               input, mutable_text_msg()));
         } else {
           goto handle_unusual;
         }
         break;
       }
 
-      // .hackchat.StatusMsg status = 4;
+      // .hackchat.StatusMsg status_msg = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
-               input, mutable_status()));
+               input, mutable_status_msg()));
         } else {
           goto handle_unusual;
         }
@@ -1107,16 +1203,16 @@ void Package::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->host_id(), output);
   }
 
-  // .hackchat.TextMsg text = 3;
-  if (has_text()) {
+  // .hackchat.TextMsg text_msg = 3;
+  if (has_text_msg()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      3, *msg_.text_, output);
+      3, *msg_.text_msg_, output);
   }
 
-  // .hackchat.StatusMsg status = 4;
-  if (has_status()) {
+  // .hackchat.StatusMsg status_msg = 4;
+  if (has_status_msg()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4, *msg_.status_, output);
+      4, *msg_.status_msg_, output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -1143,18 +1239,18 @@ void Package::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->host_id(), target);
   }
 
-  // .hackchat.TextMsg text = 3;
-  if (has_text()) {
+  // .hackchat.TextMsg text_msg = 3;
+  if (has_text_msg()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        3, *msg_.text_, deterministic, target);
+        3, *msg_.text_msg_, deterministic, target);
   }
 
-  // .hackchat.StatusMsg status = 4;
-  if (has_status()) {
+  // .hackchat.StatusMsg status_msg = 4;
+  if (has_status_msg()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        4, *msg_.status_, deterministic, target);
+        4, *msg_.status_msg_, deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -1189,18 +1285,18 @@ size_t Package::ByteSizeLong() const {
   }
 
   switch (msg_case()) {
-    // .hackchat.TextMsg text = 3;
-    case kText: {
+    // .hackchat.TextMsg text_msg = 3;
+    case kTextMsg: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
-          *msg_.text_);
+          *msg_.text_msg_);
       break;
     }
-    // .hackchat.StatusMsg status = 4;
-    case kStatus: {
+    // .hackchat.StatusMsg status_msg = 4;
+    case kStatusMsg: {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::MessageSize(
-          *msg_.status_);
+          *msg_.status_msg_);
       break;
     }
     case MSG_NOT_SET: {
@@ -1243,12 +1339,12 @@ void Package::MergeFrom(const Package& from) {
     set_host_id(from.host_id());
   }
   switch (from.msg_case()) {
-    case kText: {
-      mutable_text()->::hackchat::TextMsg::MergeFrom(from.text());
+    case kTextMsg: {
+      mutable_text_msg()->::hackchat::TextMsg::MergeFrom(from.text_msg());
       break;
     }
-    case kStatus: {
-      mutable_status()->::hackchat::StatusMsg::MergeFrom(from.status());
+    case kStatusMsg: {
+      mutable_status_msg()->::hackchat::StatusMsg::MergeFrom(from.status_msg());
       break;
     }
     case MSG_NOT_SET: {

@@ -12,6 +12,9 @@
 #include <QSqlError>
 
 #include "../proto/hackmessage.pb.h"
+#include "userhandler.h"
+#include "userbuilder.h"
+#include "objectdao.h"
 
 using hackchat::Package;
 using hackchat::TextMsg;
@@ -47,6 +50,7 @@ private:
     void send_everyone_new(int id, std::string login);
     void send_everyone_disconnected(int id);
     bool auth(const Package& msg, QTcpSocket* user);
+    bool register_user(const Package& msg, QTcpSocket* user);
 
 };
 

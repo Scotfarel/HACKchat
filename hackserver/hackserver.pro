@@ -19,6 +19,9 @@ SOURCES += main.cpp \
         ../proto/hackmessage.pb.cc
 
 HEADERS  += hackserver.h \
-          ../proto/hackmessage.pb.h
+          ../proto/hackmessage.pb.h \
+    objectdao.h \
+    userhandler.h \
+    userbuilder.h
 
 FORMS    += hackserver.ui

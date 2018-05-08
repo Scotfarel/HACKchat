@@ -15,6 +15,9 @@ Client::~Client() {
 }
 
 void Client::on_pushButton_clicked() {
+    if (ui->lineEdit->text().isEmpty()) {
+        return;
+    }
     PackageList list;
     Package* msg = list.add_pack();
     msg->set_sender_id(id);
@@ -32,32 +35,37 @@ void Client::on_pushButton_clicked() {
     TextMsg* text = new TextMsg;
     text->set_is_feature(false);
     text->set_msg_text(ui->lineEdit->text().toStdString());
-    msg->set_allocated_text(text);
+    msg->set_allocated_text_msg(text);
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);
     ui->lineEdit->clear();
 }
 
-void Client::msg_from_server(const Package& msg) {
-    if (msg.host_id() == 0) {
-        ui->msg_label->setText("Wrong login or password!");
+void Client::msg_from_server(const Package& msg) { // switch case pls
+    if (msg.status_msg().status() == StatusMsg::LOGIN_NOT_FOUND) {
+        ui->msg_label->setText("Wrong login! Maybe register?");
         return;
     }
-    if (!msg.has_status() && !msg.has_text() && id == 0) {
-        id = msg.host_id();
-        ui->stackedWidget->setCurrentIndex(1);
-        this->setWindowTitle(ui->nickname_line->text());
+    if (msg.status_msg().status() == StatusMsg::WRONG_PASS) {
+        ui->msg_label->setText("Wrong password!");
+        return;
     }
-    if (msg.status().connected()) {
-        ui->online->addItem(QString::fromStdString(msg.status().connected_login()));
-        users_online.insert((int)msg.status().connected_id(), QString::fromStdString(msg.status().connected_login()));
-    } else {
+    if (msg.status_msg().status() == StatusMsg::AUTH_SUCCESS) {
+        id = msg.status_msg().user_id();
+        ui->stackedWidget->setCurrentIndex(1);
+        this->setWindowTitle(QString::fromStdString(msg.status_msg().user_login()));
+    }
+    if (msg.status_msg().status() == StatusMsg::CONNECTED) {
+        ui->online->addItem(QString::fromStdString(msg.status_msg().user_login()));
+        users_online.insert((int)msg.status_msg().user_id(), QString::fromStdString(msg.status_msg().user_login()));
+    }
+    if (msg.status_msg().status() == StatusMsg::DISCONNECTED) {
         for (int i = 0; i < ui->online->count(); i++) {
-            if (QString::compare(ui->online->item(i)->text(), users_online[msg.status().connected_id()]) == 0) {
+            if (QString::compare(ui->online->item(i)->text(), users_online[msg.status_msg().user_id()]) == 0) {
                 delete ui->online->item(i);
             }
         }
-        users_online.remove(msg.status().connected_id());
+        users_online.remove(msg.status_msg().user_id());
     }
 }
 
@@ -74,10 +82,12 @@ void Client::leer() {
             msg_from_server(p);
             continue;
         }
-        if (p.has_text() && p.text().is_feature()) {
-            ui->feature->setPlainText(QString::fromStdString(p.text().msg_text()));
+        if (p.has_text_msg() && p.text_msg().is_feature()) {
+            ui->feature->setPlainText(QString::fromStdString(p.text_msg().msg_text()));
         } else {
-            ui->messages->appendPlainText(QString::fromStdString(p.text().msg_text()));
+            ui->messages->appendPlainText(users_online[p.sender_id()]);
+            ui->messages->appendPlainText(QString::fromStdString(" : "));
+            ui->messages->appendPlainText(QString::fromStdString(p.text_msg().msg_text()));
             ui->feature->clear();
         }
     }
@@ -103,7 +113,7 @@ void Client::on_lineEdit_textEdited(const QString &arg1)
     TextMsg* text = new TextMsg;
     text->set_is_feature(true);
     text->set_msg_text(arg1.toStdString());
-    msg->set_allocated_text(text);
+    msg->set_allocated_text_msg(text);
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);
 }
@@ -130,16 +140,15 @@ void Client::on_pushButton_2_pressed()
 
 void Client::send_user_info() {
     PackageList list;
-    Package* msg = list.add_pack();
-    msg->set_sender_id(id);
-    msg->set_host_id(-1);
-    TextMsg* text = new TextMsg;
-    text->set_is_feature(false);
-    QString user_info(ui->nickname_line->text());
-    user_info.append(' ');
-    user_info.append(ui->password_line->text());
-    text->set_msg_text(user_info.toStdString());
-    msg->set_allocated_text(text);
+    Package* pckg = list.add_pack();
+    pckg->set_sender_id(id);
+    pckg->set_host_id(-1);
+    StatusMsg* status = new StatusMsg;
+    status->set_status(StatusMsg::CONNECTED);
+    status->set_user_id(id);
+    status->set_user_login(ui->nickname_line->text().toStdString());
+    status->set_user_pass(ui->password_line->text().toStdString());
+    pckg->set_allocated_status_msg(status);
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);
 }
@@ -157,4 +166,20 @@ void Client::on_password_line_textEdited()
 void Client::on_lineEdit_returnPressed()
 {
     ui->pushButton->clicked();
+}
+
+void Client::on_pushButton_3_released()
+{
+    PackageList list;
+    Package* pckg = list.add_pack();
+    pckg->set_sender_id(id);
+    pckg->set_host_id(-1);
+    StatusMsg* status = new StatusMsg;
+    status->set_status(StatusMsg::NEW_USER);
+    status->set_user_id(id);
+    status->set_user_login(ui->nickname_line->text().toStdString());
+    status->set_user_pass(ui->password_line->text().toStdString());
+    pckg->set_allocated_status_msg(status);
+    QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
+    tcpSock->write(f_message);
 }
