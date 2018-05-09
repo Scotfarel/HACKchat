@@ -23,10 +23,10 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="page">
+      <widget class="QWidget" name="start_page">
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QGroupBox" name="groupBox">
+         <widget class="QGroupBox" name="login_group">
           <property name="title">
            <string>Login</string>
           </property>
@@ -106,7 +106,7 @@
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QLabel" name="nickname_label">
+            <widget class="QLabel" name="login_label">
              <property name="text">
               <string>Nickname:</string>
              </property>
@@ -123,17 +123,17 @@
             <widget class="QLineEdit" name="password_line"/>
            </item>
            <item row="0" column="2">
-            <widget class="QLineEdit" name="nickname_line"/>
+            <widget class="QLineEdit" name="login_line"/>
            </item>
            <item row="2" column="0" colspan="3">
-            <widget class="QPushButton" name="pushButton_2">
+            <widget class="QPushButton" name="log_in_button">
              <property name="text">
               <string>Connect</string>
              </property>
             </widget>
            </item>
            <item row="3" column="0" colspan="3">
-            <widget class="QPushButton" name="pushButton_3">
+            <widget class="QPushButton" name="sign_in_button">
              <property name="text">
               <string>Registration</string>
              </property>
@@ -143,7 +143,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="groupBox_2">
+         <widget class="QGroupBox" name="server_group">
           <property name="title">
            <string>Server settings</string>
           </property>
@@ -184,13 +184,13 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="page_2">
+      <widget class="QWidget" name="chats_page">
        <layout class="QGridLayout" name="gridLayout_2">
         <item row="4" column="1">
-         <widget class="QLineEdit" name="lineEdit"/>
+         <widget class="QLineEdit" name="msg_edit"/>
         </item>
         <item row="4" column="2">
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="send_button">
           <property name="text">
            <string>Send</string>
           </property>

@@ -7,15 +7,15 @@ Client::Client(QWidget *parent) :
     id(0) // maybe we should change it
 {
     ui->setupUi(this);
-    ui->nickname_line->setFocus();
+    ui->login_line->setFocus();
 }
 
 Client::~Client() {
     delete ui;
 }
 
-void Client::on_pushButton_clicked() {
-    if (ui->lineEdit->text().isEmpty()) {
+void Client::on_send_button_clicked() {
+    if (ui->msg_edit->text().isEmpty()) {
         return;
     }
     PackageList list;
@@ -34,7 +34,7 @@ void Client::on_pushButton_clicked() {
     msg->set_host_id(send_to);
     TextMsg* text = new TextMsg;
     text->set_is_feature(false);
-    text->set_msg_text(ui->lineEdit->text().toStdString());
+    text->set_msg_text(ui->msg_edit->text().toStdString());
 
     Timestamp* date = new Timestamp;
     size_t local_time = time(NULL) + 10800;
@@ -44,7 +44,8 @@ void Client::on_pushButton_clicked() {
     msg->set_allocated_text_msg(text);
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);
-    ui->lineEdit->clear();
+    show_msg(*msg);
+    ui->msg_edit->clear();
 }
 
 void Client::msg_from_server(const Package& msg) { // switch case pls
@@ -57,6 +58,7 @@ void Client::msg_from_server(const Package& msg) { // switch case pls
         return;
     }
     if (msg.status_msg().status() == StatusMsg::AUTH_SUCCESS) {
+        nickname = ui->login_line->text();
         id = msg.status_msg().user_id();
         ui->stackedWidget->setCurrentIndex(1);
         this->setWindowTitle(QString::fromStdString(msg.status_msg().user_login()));
@@ -91,20 +93,13 @@ void Client::leer() {
         if (p.has_text_msg() && p.text_msg().is_feature()) {
             ui->feature->setPlainText(QString::fromStdString(p.text_msg().msg_text()));
         } else {
-            QString first_str = users_online[p.sender_id()];
-            first_str.append(" (");
-            std::string time = TimeUtil::ToString(p.text_msg().date());
-            std::replace(time.begin(), time.end(), 'T', ' ');
-            first_str.append(QString::fromStdString(time.substr(0, time.size()-1)));
-            first_str.append("):");
-            ui->messages->appendPlainText(first_str);
-            ui->messages->appendPlainText(QString::fromStdString(p.text_msg().msg_text()));
+            show_msg(p);
             ui->feature->clear();
         }
     }
 }
 
-void Client::on_lineEdit_textEdited(const QString &arg1)
+void Client::on_msg_edit_textEdited(const QString &arg1)
 {
     PackageList list;
     Package* msg = list.add_pack();
@@ -129,9 +124,9 @@ void Client::on_lineEdit_textEdited(const QString &arg1)
     tcpSock->write(f_message);
 }
 
-void Client::on_pushButton_2_pressed()
+void Client::on_log_in_button_pressed()
 {
-    if (ui->nickname_line->text().isEmpty()) {
+    if (ui->login_line->text().isEmpty()) {
         ui->msg_label->setText("Login field is empty!");
         return;
     }
@@ -146,25 +141,25 @@ void Client::on_pushButton_2_pressed()
         connect(tcpSock, SIGNAL(readyRead()), this, SLOT(leer()));
         first_connect = true;
     }
-    send_user_info();
+    send_user_info(StatusMsg::CONNECTED);
 }
 
-void Client::send_user_info() {
+void Client::send_user_info(StatusMsg::Status status) {
     PackageList list;
     Package* pckg = list.add_pack();
     pckg->set_sender_id(id);
     pckg->set_host_id(-1);
-    StatusMsg* status = new StatusMsg;
-    status->set_status(StatusMsg::CONNECTED);
-    status->set_user_id(id);
-    status->set_user_login(ui->nickname_line->text().toStdString());
-    status->set_user_pass(ui->password_line->text().toStdString());
-    pckg->set_allocated_status_msg(status);
+    StatusMsg* status_msg = new StatusMsg;
+    status_msg->set_status(status);
+    status_msg->set_user_id(id);
+    status_msg->set_user_login(ui->login_line->text().toStdString());
+    status_msg->set_user_pass(ui->password_line->text().toStdString());
+    pckg->set_allocated_status_msg(status_msg);
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);
 }
 
-void Client::on_nickname_line_textEdited()
+void Client::on_login_line_textEdited()
 {
     ui->msg_label->clear();
 }
@@ -174,23 +169,28 @@ void Client::on_password_line_textEdited()
     ui->msg_label->clear();
 }
 
-void Client::on_lineEdit_returnPressed()
+void Client::on_msg_edit_returnPressed()
 {
-    ui->pushButton->clicked();
+    ui->send_button->clicked();
 }
 
-void Client::on_pushButton_3_released()
+void Client::on_sign_in_button_pressed()
 {
-    PackageList list;
-    Package* pckg = list.add_pack();
-    pckg->set_sender_id(id);
-    pckg->set_host_id(-1);
-    StatusMsg* status = new StatusMsg;
-    status->set_status(StatusMsg::NEW_USER);
-    status->set_user_id(id);
-    status->set_user_login(ui->nickname_line->text().toStdString());
-    status->set_user_pass(ui->password_line->text().toStdString());
-    pckg->set_allocated_status_msg(status);
-    QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
-    tcpSock->write(f_message);
+    send_user_info(StatusMsg::NEW_USER);
+}
+
+void Client::show_msg(const Package& p) {
+    QString first_str;
+    if (p.sender_id() == id) {
+        first_str = nickname;
+    } else {
+        first_str = users_online[p.sender_id()];
+    }
+    first_str.append(" (");
+    std::string time = TimeUtil::ToString(p.text_msg().date());
+    std::replace(time.begin(), time.end(), 'T', ' ');
+    first_str.append(QString::fromStdString(time.substr(0, time.size()-1)));
+    first_str.append("):");
+    ui->messages->appendPlainText(first_str);
+    ui->messages->appendPlainText(QString::fromStdString(p.text_msg().msg_text()));
 }

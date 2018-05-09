@@ -40,15 +40,16 @@ private:
     bool first_connect = false; // i will change it
     int id;
     void msg_from_server(const Package& msg);
-    void send_user_info();
+    void send_user_info(StatusMsg::Status status);
+    void show_msg(const Package& p);
 private slots:
-    void on_pushButton_clicked();
-    void on_lineEdit_textEdited(const QString &arg1);
-    void on_pushButton_2_pressed();
-    void on_nickname_line_textEdited();
+    void on_send_button_clicked();
+    void on_msg_edit_textEdited(const QString &arg1);
+    void on_log_in_button_pressed();
+    void on_login_line_textEdited();
     void on_password_line_textEdited();
-    void on_lineEdit_returnPressed();
-    void on_pushButton_3_released();
+    void on_msg_edit_returnPressed();
+    void on_sign_in_button_pressed();
 };
 
 #endif // CLIENT_H
