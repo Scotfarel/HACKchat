@@ -22,6 +22,8 @@ HEADERS  += hackserver.h \
           ../proto/hackmessage.pb.h \
     objectdao.h \
     userhandler.h \
-    userbuilder.h
+    userbuilder.h \
+    messagebuilder.h \
+    messagehandler.h
 
 FORMS    += hackserver.ui

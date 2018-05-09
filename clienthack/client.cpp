@@ -35,6 +35,12 @@ void Client::on_pushButton_clicked() {
     TextMsg* text = new TextMsg;
     text->set_is_feature(false);
     text->set_msg_text(ui->lineEdit->text().toStdString());
+
+    Timestamp* date = new Timestamp;
+    size_t local_time = time(NULL) + 10800;
+    date->set_seconds(local_time);
+    date->set_nanos(0);
+    text->set_allocated_date(date);
     msg->set_allocated_text_msg(text);
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);
@@ -85,8 +91,13 @@ void Client::leer() {
         if (p.has_text_msg() && p.text_msg().is_feature()) {
             ui->feature->setPlainText(QString::fromStdString(p.text_msg().msg_text()));
         } else {
-            ui->messages->appendPlainText(users_online[p.sender_id()]);
-            ui->messages->appendPlainText(QString::fromStdString(" : "));
+            QString first_str = users_online[p.sender_id()];
+            first_str.append(" (");
+            std::string time = TimeUtil::ToString(p.text_msg().date());
+            std::replace(time.begin(), time.end(), 'T', ' ');
+            first_str.append(QString::fromStdString(time.substr(0, time.size()-1)));
+            first_str.append("):");
+            ui->messages->appendPlainText(first_str);
             ui->messages->appendPlainText(QString::fromStdString(p.text_msg().msg_text()));
             ui->feature->clear();
         }

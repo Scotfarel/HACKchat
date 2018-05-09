@@ -2,6 +2,8 @@
 #define HACKSERVER_H
 
 #include <google/protobuf/message.h>
+#include <google/protobuf/util/time_util.h>
+#include <time.h>
 #include <map>
 #include <string.h>
 #include <QMainWindow>
@@ -14,12 +16,16 @@
 #include "../proto/hackmessage.pb.h"
 #include "userhandler.h"
 #include "userbuilder.h"
+#include "messagehandler.h"
+#include "messagebuilder.h"
 #include "objectdao.h"
 
 using hackchat::Package;
 using hackchat::TextMsg;
 using hackchat::StatusMsg;
 using hackchat::PackageList;
+using google::protobuf::Timestamp;
+using google::protobuf::util::TimeUtil;
 
 namespace Ui {
 class hackserver;

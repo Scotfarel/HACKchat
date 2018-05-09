@@ -52,6 +52,7 @@ void InitDefaultsTextMsgImpl() {
 #else
   ::google::protobuf::internal::InitProtobufDefaults();
 #endif  // GOOGLE_PROTOBUF_ENFORCE_UNIQUENESS
+  protobuf_google_2fprotobuf_2ftimestamp_2eproto::InitDefaultsTimestamp();
   {
     void* ptr = &::hackchat::_TextMsg_default_instance_;
     new (ptr) ::hackchat::TextMsg();
@@ -142,6 +143,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   ~0u,  // no _weak_field_map_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::TextMsg, msg_text_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::TextMsg, is_feature_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::TextMsg, date_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::hackchat::StatusMsg, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -170,9 +172,9 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
 };
 static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, sizeof(::hackchat::TextMsg)},
-  { 7, -1, sizeof(::hackchat::StatusMsg)},
-  { 16, -1, sizeof(::hackchat::Package)},
-  { 26, -1, sizeof(::hackchat::PackageList)},
+  { 8, -1, sizeof(::hackchat::StatusMsg)},
+  { 17, -1, sizeof(::hackchat::Package)},
+  { 27, -1, sizeof(::hackchat::PackageList)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -204,24 +206,27 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void AddDescriptorsImpl() {
   InitDefaults();
   static const char descriptor[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-      "\n\021hackmessage.proto\022\010hackchat\"/\n\007TextMsg"
-      "\022\020\n\010msg_text\030\001 \001(\t\022\022\n\nis_feature\030\002 \001(\010\"\337"
-      "\001\n\tStatusMsg\022*\n\006status\030\001 \001(\0162\032.hackchat."
-      "StatusMsg.Status\022\017\n\007user_id\030\002 \001(\005\022\022\n\nuse"
-      "r_login\030\003 \001(\t\022\021\n\tuser_pass\030\004 \001(\t\"n\n\006Stat"
-      "us\022\020\n\014AUTH_SUCCESS\020\000\022\016\n\nWRONG_PASS\020\001\022\023\n\017"
-      "LOGIN_NOT_FOUND\020\002\022\r\n\tCONNECTED\020\003\022\020\n\014DISC"
-      "ONNECTED\020\004\022\014\n\010NEW_USER\020\005\"\206\001\n\007Package\022\021\n\t"
-      "sender_id\030\001 \001(\005\022\017\n\007host_id\030\002 \001(\005\022%\n\010text"
-      "_msg\030\003 \001(\0132\021.hackchat.TextMsgH\000\022)\n\nstatu"
-      "s_msg\030\004 \001(\0132\023.hackchat.StatusMsgH\000B\005\n\003ms"
-      "g\".\n\013PackageList\022\037\n\004pack\030\001 \003(\0132\021.hackcha"
-      "t.Packageb\006proto3"
+      "\n\021hackmessage.proto\022\010hackchat\032\037google/pr"
+      "otobuf/timestamp.proto\"Y\n\007TextMsg\022\020\n\010msg"
+      "_text\030\001 \001(\t\022\022\n\nis_feature\030\002 \001(\010\022(\n\004date\030"
+      "\003 \001(\0132\032.google.protobuf.Timestamp\"\337\001\n\tSt"
+      "atusMsg\022*\n\006status\030\001 \001(\0162\032.hackchat.Statu"
+      "sMsg.Status\022\017\n\007user_id\030\002 \001(\005\022\022\n\nuser_log"
+      "in\030\003 \001(\t\022\021\n\tuser_pass\030\004 \001(\t\"n\n\006Status\022\020\n"
+      "\014AUTH_SUCCESS\020\000\022\016\n\nWRONG_PASS\020\001\022\023\n\017LOGIN"
+      "_NOT_FOUND\020\002\022\r\n\tCONNECTED\020\003\022\020\n\014DISCONNEC"
+      "TED\020\004\022\014\n\010NEW_USER\020\005\"\206\001\n\007Package\022\021\n\tsende"
+      "r_id\030\001 \001(\005\022\017\n\007host_id\030\002 \001(\005\022%\n\010text_msg\030"
+      "\003 \001(\0132\021.hackchat.TextMsgH\000\022)\n\nstatus_msg"
+      "\030\004 \001(\0132\023.hackchat.StatusMsgH\000B\005\n\003msg\".\n\013"
+      "PackageList\022\037\n\004pack\030\001 \003(\0132\021.hackchat.Pac"
+      "kageb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 497);
+      descriptor, 572);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "hackmessage.proto", &protobuf_RegisterTypes);
+  ::protobuf_google_2fprotobuf_2ftimestamp_2eproto::AddDescriptors();
 }
 
 void AddDescriptors() {
@@ -269,10 +274,19 @@ const int StatusMsg::Status_ARRAYSIZE;
 // ===================================================================
 
 void TextMsg::InitAsDefaultInstance() {
+  ::hackchat::_TextMsg_default_instance_._instance.get_mutable()->date_ = const_cast< ::google::protobuf::Timestamp*>(
+      ::google::protobuf::Timestamp::internal_default_instance());
+}
+void TextMsg::clear_date() {
+  if (GetArenaNoVirtual() == NULL && date_ != NULL) {
+    delete date_;
+  }
+  date_ = NULL;
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const int TextMsg::kMsgTextFieldNumber;
 const int TextMsg::kIsFeatureFieldNumber;
+const int TextMsg::kDateFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 TextMsg::TextMsg()
@@ -292,13 +306,20 @@ TextMsg::TextMsg(const TextMsg& from)
   if (from.msg_text().size() > 0) {
     msg_text_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.msg_text_);
   }
+  if (from.has_date()) {
+    date_ = new ::google::protobuf::Timestamp(*from.date_);
+  } else {
+    date_ = NULL;
+  }
   is_feature_ = from.is_feature_;
   // @@protoc_insertion_point(copy_constructor:hackchat.TextMsg)
 }
 
 void TextMsg::SharedCtor() {
   msg_text_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  is_feature_ = false;
+  ::memset(&date_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&is_feature_) -
+      reinterpret_cast<char*>(&date_)) + sizeof(is_feature_));
   _cached_size_ = 0;
 }
 
@@ -309,6 +330,7 @@ TextMsg::~TextMsg() {
 
 void TextMsg::SharedDtor() {
   msg_text_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (this != internal_default_instance()) delete date_;
 }
 
 void TextMsg::SetCachedSize(int size) const {
@@ -341,6 +363,10 @@ void TextMsg::Clear() {
   (void) cached_has_bits;
 
   msg_text_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (GetArenaNoVirtual() == NULL && date_ != NULL) {
+    delete date_;
+  }
+  date_ = NULL;
   is_feature_ = false;
   _internal_metadata_.Clear();
 }
@@ -379,6 +405,18 @@ bool TextMsg::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
                  input, &is_feature_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .google.protobuf.Timestamp date = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+               input, mutable_date()));
         } else {
           goto handle_unusual;
         }
@@ -426,6 +464,12 @@ void TextMsg::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteBool(2, this->is_feature(), output);
   }
 
+  // .google.protobuf.Timestamp date = 3;
+  if (this->has_date()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      3, *this->date_, output);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
@@ -456,6 +500,13 @@ void TextMsg::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(2, this->is_feature(), target);
   }
 
+  // .google.protobuf.Timestamp date = 3;
+  if (this->has_date()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        3, *this->date_, deterministic, target);
+  }
+
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
@@ -478,6 +529,13 @@ size_t TextMsg::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->msg_text());
+  }
+
+  // .google.protobuf.Timestamp date = 3;
+  if (this->has_date()) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::MessageSize(
+        *this->date_);
   }
 
   // bool is_feature = 2;
@@ -518,6 +576,9 @@ void TextMsg::MergeFrom(const TextMsg& from) {
 
     msg_text_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.msg_text_);
   }
+  if (from.has_date()) {
+    mutable_date()->::google::protobuf::Timestamp::MergeFrom(from.date());
+  }
   if (from.is_feature() != 0) {
     set_is_feature(from.is_feature());
   }
@@ -548,6 +609,7 @@ void TextMsg::Swap(TextMsg* other) {
 void TextMsg::InternalSwap(TextMsg* other) {
   using std::swap;
   msg_text_.Swap(&other->msg_text_);
+  swap(date_, other->date_);
   swap(is_feature_, other->is_feature_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
   swap(_cached_size_, other->_cached_size_);

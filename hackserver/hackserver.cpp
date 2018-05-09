@@ -75,6 +75,15 @@ void hackserver::read() {
         text.append(p.text_msg().msg_text());
         ui->plainTextEdit->appendPlainText(QString::fromStdString(text));
         if (p.host_id() != -1) {
+            if (!p.text_msg().is_feature()) {
+                QVector<QString> values;
+                values.append(QString::number(p.sender_id()));
+                values.append(QString::number(p.host_id()));
+                values.append(QString::fromStdString(p.text_msg().msg_text()));
+                values.append(QString::number(TimeUtil::TimestampToSeconds(p.text_msg().date())));
+                ObjectDAO<MessageBuilder, MessageHandler> obj_dao;
+                obj_dao.insert(values);
+            }
             auto need_to = clients_map.find(p.host_id());
             need_to->second->write(buffer);
         } else {

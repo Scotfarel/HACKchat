@@ -30,6 +30,7 @@
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
 #include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
+#include <google/protobuf/timestamp.pb.h>
 // @@protoc_insertion_point(includes)
 
 namespace protobuf_hackmessage_2eproto {
@@ -197,6 +198,15 @@ class TextMsg : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::std::string* release_msg_text();
   void set_allocated_msg_text(::std::string* msg_text);
 
+  // .google.protobuf.Timestamp date = 3;
+  bool has_date() const;
+  void clear_date();
+  static const int kDateFieldNumber = 3;
+  const ::google::protobuf::Timestamp& date() const;
+  ::google::protobuf::Timestamp* release_date();
+  ::google::protobuf::Timestamp* mutable_date();
+  void set_allocated_date(::google::protobuf::Timestamp* date);
+
   // bool is_feature = 2;
   void clear_is_feature();
   static const int kIsFeatureFieldNumber = 2;
@@ -208,6 +218,7 @@ class TextMsg : public ::google::protobuf::Message /* @@protoc_insertion_point(c
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr msg_text_;
+  ::google::protobuf::Timestamp* date_;
   bool is_feature_;
   mutable int _cached_size_;
   friend struct ::protobuf_hackmessage_2eproto::TableStruct;
@@ -708,6 +719,51 @@ inline void TextMsg::set_is_feature(bool value) {
   
   is_feature_ = value;
   // @@protoc_insertion_point(field_set:hackchat.TextMsg.is_feature)
+}
+
+// .google.protobuf.Timestamp date = 3;
+inline bool TextMsg::has_date() const {
+  return this != internal_default_instance() && date_ != NULL;
+}
+inline const ::google::protobuf::Timestamp& TextMsg::date() const {
+  const ::google::protobuf::Timestamp* p = date_;
+  // @@protoc_insertion_point(field_get:hackchat.TextMsg.date)
+  return p != NULL ? *p : *reinterpret_cast<const ::google::protobuf::Timestamp*>(
+      &::google::protobuf::_Timestamp_default_instance_);
+}
+inline ::google::protobuf::Timestamp* TextMsg::release_date() {
+  // @@protoc_insertion_point(field_release:hackchat.TextMsg.date)
+  
+  ::google::protobuf::Timestamp* temp = date_;
+  date_ = NULL;
+  return temp;
+}
+inline ::google::protobuf::Timestamp* TextMsg::mutable_date() {
+  
+  if (date_ == NULL) {
+    date_ = new ::google::protobuf::Timestamp;
+  }
+  // @@protoc_insertion_point(field_mutable:hackchat.TextMsg.date)
+  return date_;
+}
+inline void TextMsg::set_allocated_date(::google::protobuf::Timestamp* date) {
+  ::google::protobuf::Arena* message_arena = GetArenaNoVirtual();
+  if (message_arena == NULL) {
+    delete reinterpret_cast< ::google::protobuf::MessageLite*>(date_);
+  }
+  if (date) {
+    ::google::protobuf::Arena* submessage_arena =
+      reinterpret_cast< ::google::protobuf::MessageLite*>(date)->GetArena();
+    if (message_arena != submessage_arena) {
+      date = ::google::protobuf::internal::GetOwnedMessage(
+          message_arena, date, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  date_ = date;
+  // @@protoc_insertion_point(field_set_allocated:hackchat.TextMsg.date)
 }
 
 // -------------------------------------------------------------------

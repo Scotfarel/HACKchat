@@ -1,6 +1,9 @@
 #ifndef CLIENT_H
 #define CLIENT_H
+
+#include <time.h>
 #include <google/protobuf/message.h>
+#include <google/protobuf/util/time_util.h>
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QHostAddress>
@@ -11,6 +14,8 @@ using hackchat::Package;
 using hackchat::TextMsg;
 using hackchat::StatusMsg;
 using hackchat::PackageList;
+using google::protobuf::Timestamp;
+using google::protobuf::util::TimeUtil;
 
 namespace Ui {
 class Client;
