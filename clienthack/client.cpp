@@ -153,7 +153,9 @@ void Client::send_user_info(StatusMsg::Status status) {
     status_msg->set_status(status);
     status_msg->set_user_id(id);
     status_msg->set_user_login(ui->login_line->text().toStdString());
-    status_msg->set_user_pass(ui->password_line->text().toStdString());
+
+    QByteArray pass = QCryptographicHash::hash(ui->password_line->text().toUtf8(), QCryptographicHash::Md5);
+    status_msg->set_user_pass(pass);
     pckg->set_allocated_status_msg(status_msg);
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);

@@ -212,7 +212,7 @@ void AddDescriptorsImpl() {
       "\003 \001(\0132\032.google.protobuf.Timestamp\"\337\001\n\tSt"
       "atusMsg\022*\n\006status\030\001 \001(\0162\032.hackchat.Statu"
       "sMsg.Status\022\017\n\007user_id\030\002 \001(\005\022\022\n\nuser_log"
-      "in\030\003 \001(\t\022\021\n\tuser_pass\030\004 \001(\t\"n\n\006Status\022\020\n"
+      "in\030\003 \001(\t\022\021\n\tuser_pass\030\004 \001(\014\"n\n\006Status\022\020\n"
       "\014AUTH_SUCCESS\020\000\022\016\n\nWRONG_PASS\020\001\022\023\n\017LOGIN"
       "_NOT_FOUND\020\002\022\r\n\tCONNECTED\020\003\022\020\n\014DISCONNEC"
       "TED\020\004\022\014\n\010NEW_USER\020\005\"\206\001\n\007Package\022\021\n\tsende"
@@ -770,16 +770,12 @@ bool StatusMsg::MergePartialFromCodedStream(
         break;
       }
 
-      // string user_pass = 4;
+      // bytes user_pass = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_user_pass()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->user_pass().data(), static_cast<int>(this->user_pass().length()),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "hackchat.StatusMsg.user_pass"));
         } else {
           goto handle_unusual;
         }
@@ -833,13 +829,9 @@ void StatusMsg::SerializeWithCachedSizes(
       3, this->user_login(), output);
   }
 
-  // string user_pass = 4;
+  // bytes user_pass = 4;
   if (this->user_pass().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->user_pass().data(), static_cast<int>(this->user_pass().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "hackchat.StatusMsg.user_pass");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
       4, this->user_pass(), output);
   }
 
@@ -879,14 +871,10 @@ void StatusMsg::SerializeWithCachedSizes(
         3, this->user_login(), target);
   }
 
-  // string user_pass = 4;
+  // bytes user_pass = 4;
   if (this->user_pass().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->user_pass().data(), static_cast<int>(this->user_pass().length()),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "hackchat.StatusMsg.user_pass");
     target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         4, this->user_pass(), target);
   }
 
@@ -914,10 +902,10 @@ size_t StatusMsg::ByteSizeLong() const {
         this->user_login());
   }
 
-  // string user_pass = 4;
+  // bytes user_pass = 4;
   if (this->user_pass().size() > 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
+      ::google::protobuf::internal::WireFormatLite::BytesSize(
         this->user_pass());
   }
 

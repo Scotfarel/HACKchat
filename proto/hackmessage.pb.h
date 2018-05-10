@@ -356,7 +356,7 @@ class StatusMsg : public ::google::protobuf::Message /* @@protoc_insertion_point
   ::std::string* release_user_login();
   void set_allocated_user_login(::std::string* user_login);
 
-  // string user_pass = 4;
+  // bytes user_pass = 4;
   void clear_user_pass();
   static const int kUserPassFieldNumber = 4;
   const ::std::string& user_pass() const;
@@ -365,7 +365,7 @@ class StatusMsg : public ::google::protobuf::Message /* @@protoc_insertion_point
   void set_user_pass(::std::string&& value);
   #endif
   void set_user_pass(const char* value);
-  void set_user_pass(const char* value, size_t size);
+  void set_user_pass(const void* value, size_t size);
   ::std::string* mutable_user_pass();
   ::std::string* release_user_pass();
   void set_allocated_user_pass(::std::string* user_pass);
@@ -851,7 +851,7 @@ inline void StatusMsg::set_allocated_user_login(::std::string* user_login) {
   // @@protoc_insertion_point(field_set_allocated:hackchat.StatusMsg.user_login)
 }
 
-// string user_pass = 4;
+// bytes user_pass = 4;
 inline void StatusMsg::clear_user_pass() {
   user_pass_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -878,7 +878,7 @@ inline void StatusMsg::set_user_pass(const char* value) {
   user_pass_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
   // @@protoc_insertion_point(field_set_char:hackchat.StatusMsg.user_pass)
 }
-inline void StatusMsg::set_user_pass(const char* value, size_t size) {
+inline void StatusMsg::set_user_pass(const void* value, size_t size) {
   
   user_pass_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));

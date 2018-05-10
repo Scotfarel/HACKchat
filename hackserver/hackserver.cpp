@@ -111,7 +111,7 @@ void hackserver::read() {
 
 bool hackserver::register_user(const Package& msg, QTcpSocket* user) {
     QString login = QString::fromStdString(msg.status_msg().user_login());
-    QString password = QString::fromStdString(msg.status_msg().user_pass());
+    QByteArray password(msg.status_msg().user_pass().c_str(), msg.status_msg().user_pass().length());
     ObjectDAO<UserBuilder, UserHandler> obj_dao;
     QVector<QString> values;
     values.append(login);
@@ -121,7 +121,7 @@ bool hackserver::register_user(const Package& msg, QTcpSocket* user) {
 
 bool hackserver::auth(const Package& msg, QTcpSocket* user) {
     QString login = QString::fromStdString(msg.status_msg().user_login());
-    QString password = QString::fromStdString(msg.status_msg().user_pass());
+    QByteArray password(msg.status_msg().user_pass().c_str(), msg.status_msg().user_pass().length());
 
     ObjectDAO<UserBuilder, UserHandler> obj_dao;
     QMap<QString, QString> values = obj_dao.get_by_log(login);

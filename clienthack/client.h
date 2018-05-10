@@ -7,6 +7,7 @@
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QHostAddress>
+#include <QCryptographicHash>
 
 #include "../proto/hackmessage.pb.h"
 

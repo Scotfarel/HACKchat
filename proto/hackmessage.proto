@@ -22,7 +22,7 @@ message StatusMsg {
 	Status status = 1;
 	int32 user_id = 2;
 	string user_login = 3;
-	string user_pass = 4;
+	bytes user_pass = 4;
 }
 
 message Package {
