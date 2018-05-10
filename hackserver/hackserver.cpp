@@ -30,6 +30,8 @@ void hackserver::connect_new() {
 }
 
 void hackserver::send_everyone_new(int id, std::string login) {
+    ObjectDAO<UserBuilder, UserHandler> obj_dao;
+    QVector<QString> friends = obj_dao.get_friends(id);
     PackageList list;
     Package* msg = list.add_pack();
     msg->set_sender_id(-1);
@@ -38,10 +40,14 @@ void hackserver::send_everyone_new(int id, std::string login) {
     status->set_user_id(id);
     status->set_user_login(login);
     msg->set_allocated_status_msg(status);
-    for (std::pair<int const, QTcpSocket*>& c : clients_map) {
-        msg->set_host_id(c.first);
+    for (int i = 0; i < friends.size(); i++) {
+        int friend_id = friends.at(i).toInt();
+        if (clients_map.find(friend_id) == clients_map.end()) {
+            continue;
+        }
+        msg->set_host_id(friend_id);
         QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
-        c.second->write(f_message, f_message.size());
+        clients_map[friend_id]->write(f_message, f_message.size());
     }
 }
 
@@ -144,15 +150,21 @@ bool hackserver::auth(const Package& msg, QTcpSocket* user) {
     status->set_status(StatusMsg::AUTH_SUCCESS);
     status->set_user_id(user_id);
     status->set_user_login(login.toStdString());
-    for (auto it = clients_map.begin(); it != clients_map.end(); ++it) {
+    ObjectDAO<UserBuilder, UserHandler> friend_list;
+    QVector<QString> friends = friend_list.get_friends(user_id);
+    for (int i = 0; i < friends.size(); i++) {
+        int friend_id = friends.at(i).toInt();
+        if (clients_map.find(friend_id) == clients_map.end()) {
+            continue;
+        }
         Package* user_online = online_list.add_pack();
         user_online->set_sender_id(-1);
         user_online->set_host_id(user_id);
         StatusMsg* online_user = new StatusMsg;
         online_user->set_status(StatusMsg::CONNECTED);
         ObjectDAO<UserBuilder, UserHandler> obj_dao;
-        QMap<QString, QString> values = obj_dao.get_by_id(it->first);
-        online_user->set_user_id(it->first);
+        QMap<QString, QString> values = obj_dao.get_by_id(friend_id);
+        online_user->set_user_id(friend_id);
         online_user->set_user_login(values["login"].toStdString());
         user_online->set_allocated_status_msg(online_user);
     }

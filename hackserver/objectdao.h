@@ -13,6 +13,7 @@ private:
     Handler* handler;
     QSqlQuery query;
     QMap<QString, QString> values;
+    QVector<QString> vector_values;
 public:
     void execute() {
         if (!query.exec()) {
@@ -37,6 +38,18 @@ public:
             }
         }
         return values;
+    }
+
+    QVector<QString> get_friends(int id) {
+        if (query.prepare(builder->get_first_friends(id))) {
+            execute();
+            handler->fill_first_friends(query, &vector_values);
+        }
+        if (query.prepare(builder->get_second_friends(id))) {
+            execute();
+            handler->fill_second_friends(query, &vector_values);
+        }
+        return vector_values;
     }
 
     QMap<QString, QString> get_by_log(QString login) {

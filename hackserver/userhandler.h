@@ -16,6 +16,19 @@ public:
         values->insert("password", query.value("p_hash").toString());
     }
 
+    void fill_first_friends(QSqlQuery query, QVector<QString>* values) {
+        while (query.next()) {
+            int friend_id = query.value("user_2").toInt();
+            values->append(QString::number(friend_id));
+        }
+    }
+    void fill_second_friends(QSqlQuery query, QVector<QString>* values) {
+        while (query.next()) {
+            int friend_id = query.value("user_1").toInt();
+            values->append(QString::number(friend_id));
+        }
+    }
+
 };
 
 #endif // USERHANDLER_H
