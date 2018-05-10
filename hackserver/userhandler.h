@@ -22,10 +22,17 @@ public:
             values->append(QString::number(friend_id));
         }
     }
+
     void fill_second_friends(QSqlQuery query, QVector<QString>* values) {
         while (query.next()) {
             int friend_id = query.value("user_1").toInt();
             values->append(QString::number(friend_id));
+        }
+    }
+
+    void friend_found(QSqlQuery query, QMap<QString, QString>* values) {
+        while (query.next()) {
+            values->insert(query.value("rowid").toString(), query.value("login").toString());
         }
     }
 

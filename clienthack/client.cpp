@@ -75,6 +75,13 @@ void Client::msg_from_server(const Package& msg) { // switch case pls
         }
         users_online.remove(msg.status_msg().user_id());
     }
+    if (msg.status_msg().status() == StatusMsg::SEARCH) {
+        if (msg.status_msg().user_id() == 0) {
+            ui->online->clear();
+            return;
+        }
+        ui->online->addItem(QString::fromStdString(msg.status_msg().user_login()));
+    }
 }
 
 void Client::leer() {
@@ -195,4 +202,28 @@ void Client::show_msg(const Package& p) {
     first_str.append("):");
     ui->messages->appendPlainText(first_str);
     ui->messages->appendPlainText(QString::fromStdString(p.text_msg().msg_text()));
+}
+
+void Client::on_search_line_textEdited(const QString &arg1)
+{
+    if (arg1.isEmpty()) {
+        ui->online_label->setText("Friends online:");
+        ui->online->clear();
+        for (auto& u : users_online) {
+            ui->online->addItem(u);
+        }
+        return;
+    }
+    ui->online_label->setText("Search result:");
+    ui->online->clear();
+    PackageList list;
+    Package* pckg = list.add_pack();
+    pckg->set_sender_id(id);
+    pckg->set_host_id(-1);
+    StatusMsg* status_msg = new StatusMsg;
+    status_msg->set_status(StatusMsg::SEARCH);
+    status_msg->set_user_login(arg1.toStdString());
+    pckg->set_allocated_status_msg(status_msg);
+    QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
+    tcpSock->write(f_message);
 }

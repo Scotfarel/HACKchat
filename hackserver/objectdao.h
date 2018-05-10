@@ -62,6 +62,14 @@ public:
         return values;
     }
 
+    QMap<QString, QString> friend_search(QString searchStr) {
+        if (query.prepare(builder->friend_search(searchStr))) {
+            execute();
+            handler->friend_found(query, &values);
+        }
+        return values;
+    }
+
     void insert(QVector<QString> cols) {
         if (query.prepare(builder->insert(cols))) {
             execute();

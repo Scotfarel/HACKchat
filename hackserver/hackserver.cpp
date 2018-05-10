@@ -105,6 +105,33 @@ void hackserver::read() {
                     }
                 }
             }
+            if (p.status_msg().status() == StatusMsg::SEARCH) {
+                ObjectDAO<UserBuilder, UserHandler> search_obj;
+                QMap<QString, QString> friends = search_obj.friend_search(QString::fromStdString(p.status_msg().user_login()));
+                if (friends.empty()) {
+                    continue; // or send "not found"
+                }
+                PackageList ans;
+                Package* empty_pckg = ans.add_pack();
+                empty_pckg->set_sender_id(-1);
+                empty_pckg->set_host_id(p.sender_id());
+                StatusMsg* e_status_msg = new StatusMsg;
+                e_status_msg->set_status(StatusMsg::SEARCH);
+                e_status_msg->set_user_id(0);
+                empty_pckg->set_allocated_status_msg(e_status_msg);
+                for (auto& it : friends.toStdMap()) {
+                    Package* pckg = ans.add_pack();
+                    pckg->set_sender_id(-1);
+                    pckg->set_host_id(p.sender_id());
+                    StatusMsg* status_msg = new StatusMsg;
+                    status_msg->set_status(StatusMsg::SEARCH);
+                    status_msg->set_user_id(it.first.toInt());
+                    status_msg->set_user_login(it.second.toStdString());
+                    pckg->set_allocated_status_msg(status_msg);
+                }
+                QByteArray f_message(ans.SerializeAsString().c_str(), ans.ByteSize());
+                client->write(f_message);
+            }
         }
     }
 }

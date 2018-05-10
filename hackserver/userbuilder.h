@@ -23,13 +23,16 @@ public:
 
     QString get_first_friends(int id) {
         QString query = QString("SELECT user_1, user_2 FROM friends WHERE user_1 = '%1'").arg(id); // OR didn't work, idk
-        qDebug() << query;
         return query;
     }
 
     QString get_second_friends(int id) {
         QString query = QString("SELECT user_1, user_2 FROM friends WHERE user_2 = '%1'").arg(id); // OR didn't work, idk
-        qDebug() << query;
+        return query;
+    }
+
+    QString friend_search(QString searchStr) {
+        QString query = QString("SELECT rowid, login FROM users WHERE login LIKE '%%1%'").arg(searchStr);
         return query;
     }
 };

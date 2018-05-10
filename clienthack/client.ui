@@ -186,8 +186,12 @@
       </widget>
       <widget class="QWidget" name="chats_page">
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="msg_edit"/>
+        <item row="0" column="0">
+         <widget class="QLabel" name="online_label">
+          <property name="text">
+           <string>Friends online:</string>
+          </property>
+         </widget>
         </item>
         <item row="4" column="2">
          <widget class="QPushButton" name="send_button">
@@ -196,17 +200,24 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1" colspan="2">
-         <widget class="QPlainTextEdit" name="feature">
-          <property name="readOnly">
-           <bool>true</bool>
+        <item row="0" column="1">
+         <widget class="QLabel" name="messages_label">
+          <property name="text">
+           <string>Messages:</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="0" rowspan="6">
-         <widget class="QListWidget" name="online"/>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="msg_edit"/>
         </item>
-        <item row="0" column="1" rowspan="3" colspan="2">
+        <item row="3" column="0">
+         <widget class="QLabel" name="search_label">
+          <property name="text">
+           <string>Friend search:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" rowspan="2" colspan="2">
          <widget class="QPlainTextEdit" name="messages">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -214,6 +225,19 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLineEdit" name="search_line"/>
+        </item>
+        <item row="1" column="0" rowspan="2">
+         <widget class="QListWidget" name="online"/>
+        </item>
+        <item row="3" column="1" colspan="2">
+         <widget class="QPlainTextEdit" name="feature">
           <property name="readOnly">
            <bool>true</bool>
           </property>

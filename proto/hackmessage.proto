@@ -18,6 +18,7 @@ message StatusMsg {
 		CONNECTED = 3;
 		DISCONNECTED = 4;
 		NEW_USER = 5;
+		SEARCH = 6;
 	}
 	Status status = 1;
 	int32 user_id = 2;

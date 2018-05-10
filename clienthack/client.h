@@ -51,6 +51,7 @@ private slots:
     void on_password_line_textEdited();
     void on_msg_edit_returnPressed();
     void on_sign_in_button_pressed();
+    void on_search_line_textEdited(const QString &arg1);
 };
 
 #endif // CLIENT_H
