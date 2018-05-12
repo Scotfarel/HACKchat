@@ -121,13 +121,20 @@
            </item>
            <item row="1" column="2">
             <widget class="QLineEdit" name="password_line">
+             <property name="maxLength">
+              <number>50</number>
+             </property>
              <property name="echoMode">
               <enum>QLineEdit::Password</enum>
              </property>
             </widget>
            </item>
            <item row="0" column="2">
-            <widget class="QLineEdit" name="login_line"/>
+            <widget class="QLineEdit" name="login_line">
+             <property name="maxLength">
+              <number>50</number>
+             </property>
+            </widget>
            </item>
            <item row="2" column="0" colspan="3">
             <widget class="QPushButton" name="log_in_button">
