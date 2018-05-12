@@ -240,6 +240,7 @@ void Client::on_online_itemDoubleClicked(QListWidgetItem *item)
     prepare_status_msg(pckg, StatusMsg::ADD, 0, item->text().toStdString());
     QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
     tcpSock->write(f_message);
+    delete item;
 }
 
 void Client::on_online_itemSelectionChanged()

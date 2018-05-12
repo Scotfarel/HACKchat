@@ -102,8 +102,9 @@ void hackserver::read() {
                     prepare_status_msg(empty_pckg, StatusMsg::NOT_FOUND);
                 } else {
                     prepare_status_msg(empty_pckg, StatusMsg::SEARCH);
+                    QVector<QString> already_friends = search_obj.get_friends(p.sender_id());
                     for (auto& it : friends.toStdMap()) {
-                        if (p.sender_id() == it.first.toInt()) {
+                        if (p.sender_id() == it.first.toInt() || already_friends.contains(it.first)) {
                             continue;
                         }
                         Package* pckg = ans.add_pack();
