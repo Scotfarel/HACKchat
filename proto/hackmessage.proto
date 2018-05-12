@@ -20,6 +20,7 @@ message StatusMsg {
 		NEW_USER = 5;
 		SEARCH = 6;
 		ADD = 7;
+		NOT_FOUND = 8;
 	}
 	Status status = 1;
 	int32 user_id = 2;

@@ -84,12 +84,13 @@ enum StatusMsg_Status {
   StatusMsg_Status_NEW_USER = 5,
   StatusMsg_Status_SEARCH = 6,
   StatusMsg_Status_ADD = 7,
+  StatusMsg_Status_NOT_FOUND = 8,
   StatusMsg_Status_StatusMsg_Status_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   StatusMsg_Status_StatusMsg_Status_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
 bool StatusMsg_Status_IsValid(int value);
 const StatusMsg_Status StatusMsg_Status_Status_MIN = StatusMsg_Status_AUTH_SUCCESS;
-const StatusMsg_Status StatusMsg_Status_Status_MAX = StatusMsg_Status_ADD;
+const StatusMsg_Status StatusMsg_Status_Status_MAX = StatusMsg_Status_NOT_FOUND;
 const int StatusMsg_Status_Status_ARRAYSIZE = StatusMsg_Status_Status_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* StatusMsg_Status_descriptor();
@@ -325,6 +326,8 @@ class StatusMsg : public ::google::protobuf::Message /* @@protoc_insertion_point
     StatusMsg_Status_SEARCH;
   static const Status ADD =
     StatusMsg_Status_ADD;
+  static const Status NOT_FOUND =
+    StatusMsg_Status_NOT_FOUND;
   static inline bool Status_IsValid(int value) {
     return StatusMsg_Status_IsValid(value);
   }

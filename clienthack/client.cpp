@@ -82,11 +82,15 @@ void Client::msg_from_server(const Package& msg) { // switch case pls
         }
         users_online.remove(msg.status_msg().user_id());
     }
+    if (msg.status_msg().status() == StatusMsg::NOT_FOUND) {
+        ui->info_label->setText("Users not found");
+    }
     if (msg.status_msg().status() == StatusMsg::SEARCH) {
         if (msg.status_msg().user_id() == 0) {
             ui->online->clear();
             return;
         }
+        ui->info_label->clear();
         ui->online->addItem(QString::fromStdString(msg.status_msg().user_login()));
     }
 }
@@ -212,6 +216,7 @@ void Client::show_msg(const Package& p) {
 void Client::on_search_line_textEdited(const QString &arg1)
 {
     if (arg1.isEmpty()) {
+        ui->info_label->clear();
         ui->online_label->setText("Friends online:");
         ui->online->clear();
         for (auto& u : users_online) {

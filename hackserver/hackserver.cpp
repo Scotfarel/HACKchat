@@ -95,20 +95,21 @@ void hackserver::read() {
             if (p.status_msg().status() == StatusMsg::SEARCH) {
                 ObjectDAO<UserBuilder, UserHandler> search_obj;
                 QMap<QString, QString> friends = search_obj.friend_search(QString::fromStdString(p.status_msg().user_login()));
-                if (friends.empty()) {
-                    continue; // or send "not found"
-                }
                 PackageList ans;
                 Package* empty_pckg = ans.add_pack();
                 empty_pckg->set_host_id(p.sender_id());
-                prepare_status_msg(empty_pckg, StatusMsg::SEARCH);
-                for (auto& it : friends.toStdMap()) {
-                    if (p.sender_id() == it.first.toInt()) {
-                        continue;
+                if (friends.isEmpty()) {
+                    prepare_status_msg(empty_pckg, StatusMsg::NOT_FOUND);
+                } else {
+                    prepare_status_msg(empty_pckg, StatusMsg::SEARCH);
+                    for (auto& it : friends.toStdMap()) {
+                        if (p.sender_id() == it.first.toInt()) {
+                            continue;
+                        }
+                        Package* pckg = ans.add_pack();
+                        pckg->set_host_id(p.sender_id());
+                        prepare_status_msg(pckg, StatusMsg::SEARCH, it.first.toInt(), it.second.toStdString());
                     }
-                    Package* pckg = ans.add_pack();
-                    pckg->set_host_id(p.sender_id());
-                    prepare_status_msg(pckg, StatusMsg::SEARCH, it.first.toInt(), it.second.toStdString());
                 }
                 QByteArray f_message(ans.SerializeAsString().c_str(), ans.ByteSize());
                 client->write(f_message);
