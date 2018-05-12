@@ -19,6 +19,7 @@ Client::Client(QWidget *parent) :
 }
 
 Client::~Client() {
+    delete tcpSock;
     delete ui;
 }
 
@@ -104,6 +105,9 @@ void Client::leer() {
             continue;
         }
         if (p.has_text_msg() && p.text_msg().is_feature()) {
+            if (ui->online->selectedItems().empty() || QString::compare(ui->online->currentItem()->text(), users_online[p.sender_id()])) {
+                return;
+            }
             ui->feature->setPlainText(QString::fromStdString(p.text_msg().msg_text()));
         } else {
             show_msg(p);
@@ -145,7 +149,9 @@ void Client::on_log_in_button_pressed()
     }
 
     if (!connected) {
-        first_connect();
+        if(!first_connect()) {
+            return;
+        }
     }
     send_user_info(StatusMsg::CONNECTED);
 }
@@ -178,7 +184,9 @@ void Client::on_msg_edit_returnPressed()
 void Client::on_sign_in_button_pressed()
 {
     if (!connected) {
-        first_connect();
+        if(!first_connect()) {
+            return;
+        }
     }
     send_user_info(StatusMsg::NEW_USER);
 }
@@ -252,12 +260,18 @@ void Client::disconnect() {
     ui->msg_label->setText("Server shut down :(");
 }
 
-void Client::first_connect() {
+bool Client::first_connect() {
     tcpSock = new QTcpSocket(this);
     tcpSock->connectToHost(QHostAddress(ui->address_line->text()), ui->port_line->text().toInt());
     connect(tcpSock, SIGNAL(readyRead()), this, SLOT(leer()));
     connect(tcpSock, SIGNAL(disconnected()), this, SLOT(disconnect()));
+    if (!tcpSock->waitForConnected()) {
+        ui->msg_label->setText("Server problems!");
+        delete tcpSock;
+        return false;
+    }
     connected = true;
+    return true;
 }
 
 void Client::prepare_text_msg(Package* package, bool is_feature, std::string msg_text) {
@@ -286,4 +300,13 @@ void Client::prepare_status_msg(Package* package, StatusMsg::Status status, int 
         status_msg->set_user_pass(hash);
     }
     package->set_allocated_status_msg(status_msg);
+}
+
+void Client::on_log_out_button_released()
+{
+    users_online.clear();
+    id = 0;
+    tcpSock->disconnectFromHost();
+    connected = false;
+    ui->msg_label->clear();
 }

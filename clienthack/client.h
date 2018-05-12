@@ -45,7 +45,7 @@ private:
     void msg_from_server(const Package& msg);
     void send_user_info(StatusMsg::Status status);
     void show_msg(const Package& p);
-    void first_connect();
+    bool first_connect();
     void prepare_text_msg(Package* package, bool is_feature, std::string msg_text);
     void prepare_status_msg(Package* package, StatusMsg::Status status, int user_id, std::string user_login, std::string hash = "");
 private slots:
@@ -59,6 +59,7 @@ private slots:
     void on_search_line_textEdited(const QString &arg1);
     void on_online_itemDoubleClicked(QListWidgetItem *item);
     void on_online_itemSelectionChanged();
+    void on_log_out_button_released();
 };
 
 #endif // CLIENT_H
