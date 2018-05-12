@@ -34,12 +34,7 @@ void hackserver::send_everyone_new(int id, std::string login) {
     QVector<QString> friends = obj_dao.get_friends(id);
     PackageList list;
     Package* msg = list.add_pack();
-    msg->set_sender_id(-1);
-    StatusMsg* status = new StatusMsg;
-    status->set_status(StatusMsg::CONNECTED);
-    status->set_user_id(id);
-    status->set_user_login(login);
-    msg->set_allocated_status_msg(status);
+    prepare_status_msg(msg, StatusMsg::CONNECTED, id, login);
     for (int i = 0; i < friends.size(); i++) {
         int friend_id = friends.at(i).toInt();
         if (clients_map.find(friend_id) == clients_map.end()) {
@@ -54,11 +49,7 @@ void hackserver::send_everyone_new(int id, std::string login) {
 void hackserver::send_everyone_disconnected(int id) {
     PackageList list;
     Package* msg = list.add_pack();
-    msg->set_sender_id(-1);
-    StatusMsg* status = new StatusMsg;
-    status->set_status(StatusMsg::DISCONNECTED);
-    status->set_user_id(id);
-    msg->set_allocated_status_msg(status);
+    prepare_status_msg(msg, StatusMsg::DISCONNECTED, id);
     for (std::pair<int const, QTcpSocket*>& c : clients_map) {
         msg->set_host_id(c.first);
         QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
@@ -109,24 +100,15 @@ void hackserver::read() {
                 }
                 PackageList ans;
                 Package* empty_pckg = ans.add_pack();
-                empty_pckg->set_sender_id(-1);
                 empty_pckg->set_host_id(p.sender_id());
-                StatusMsg* e_status_msg = new StatusMsg;
-                e_status_msg->set_status(StatusMsg::SEARCH);
-                e_status_msg->set_user_id(0);
-                empty_pckg->set_allocated_status_msg(e_status_msg);
+                prepare_status_msg(empty_pckg, StatusMsg::SEARCH);
                 for (auto& it : friends.toStdMap()) {
                     if (p.sender_id() == it.first.toInt()) {
                         continue;
                     }
                     Package* pckg = ans.add_pack();
-                    pckg->set_sender_id(-1);
                     pckg->set_host_id(p.sender_id());
-                    StatusMsg* status_msg = new StatusMsg;
-                    status_msg->set_status(StatusMsg::SEARCH);
-                    status_msg->set_user_id(it.first.toInt());
-                    status_msg->set_user_login(it.second.toStdString());
-                    pckg->set_allocated_status_msg(status_msg);
+                    prepare_status_msg(pckg, StatusMsg::SEARCH, it.first.toInt(), it.second.toStdString());
                 }
                 QByteArray f_message(ans.SerializeAsString().c_str(), ans.ByteSize());
                 client->write(f_message);
@@ -139,20 +121,14 @@ void hackserver::read() {
                 if (clients_map[friend_id]) {
                     PackageList msg;
                     Package* pck = msg.add_pack();
-                    pck->set_sender_id(-1);
                     pck->set_host_id(p.sender_id());
-                    StatusMsg* status_msg = new StatusMsg;
-                    status_msg->set_status(StatusMsg::CONNECTED);
-                    status_msg->set_user_login(p.status_msg().user_login());
-                    status_msg->set_user_id(friend_id);
-                    pck->set_allocated_status_msg(status_msg);
+                    prepare_status_msg(pck, StatusMsg::CONNECTED, friend_id, (p.status_msg().user_login()));
                     QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
                     client->write(f_message);
 
                     pck->set_host_id(friend_id);
                     data = user.get_by_id(p.sender_id());
-                    status_msg->set_user_login(data["login"].toStdString());
-                    status_msg->set_user_id(p.sender_id());
+                    prepare_status_msg(pck, StatusMsg::CONNECTED, p.sender_id(), (data["login"].toStdString()));
                     QByteArray f_message_second(msg.SerializeAsString().c_str(), msg.ByteSize());
                     clients_map.at(friend_id)->write(f_message_second);
                 }
@@ -161,32 +137,28 @@ void hackserver::read() {
     }
 }
 
-bool hackserver::register_user(const Package& msg, QTcpSocket* user) {
+void hackserver::register_user(const Package& msg, QTcpSocket* user) {
     QString login = QString::fromStdString(msg.status_msg().user_login());
     QByteArray password(msg.status_msg().user_pass().c_str(), msg.status_msg().user_pass().length());
 
     PackageList list;
     Package* answer = list.add_pack();
-    answer->set_sender_id(-1);
     answer->set_host_id(msg.sender_id());
-    StatusMsg* status = new StatusMsg;
-    answer->set_allocated_status_msg(status);
 
     ObjectDAO<UserBuilder, UserHandler> obj_dao;
     QMap<QString, QString> users = obj_dao.get_by_log(login);
     if (!users.empty()) {
-        status->set_status(StatusMsg::LOGIN_FOUND);
+        prepare_status_msg(answer, StatusMsg::LOGIN_FOUND);
     } else {
         QVector<QString> values;
         values.append(login);
         values.append(password);
         obj_dao.insert(values);
-
-        status->set_status(StatusMsg::NEW_USER);
+        prepare_status_msg(answer, StatusMsg::NEW_USER);
     }
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     user->write(f_message);
-    return true;
+    return;
 }
 
 bool hackserver::auth(const Package& msg, QTcpSocket* user) {
@@ -197,29 +169,17 @@ bool hackserver::auth(const Package& msg, QTcpSocket* user) {
     QMap<QString, QString> values = obj_dao.get_by_log(login);
     PackageList online_list;
     Package* answer = online_list.add_pack();
-    answer->set_sender_id(-1);
     answer->set_host_id(0);
-    StatusMsg* status = new StatusMsg;
-    answer->set_allocated_status_msg(status);
 
-    if (values.isEmpty()) {
-        status->set_status(StatusMsg::AUTH_UNSUCCESS);
-        QByteArray f_message(online_list.SerializeAsString().c_str(), online_list.ByteSize());
-        user->write(f_message);
-        return false;
-    }
-
-    if (QString::compare(values["password"], password)) {
-        status->set_status(StatusMsg::AUTH_UNSUCCESS);
+    if (values.isEmpty() || QString::compare(values["password"], password)) {
+        prepare_status_msg(answer, StatusMsg::AUTH_UNSUCCESS);
         QByteArray f_message(online_list.SerializeAsString().c_str(), online_list.ByteSize());
         user->write(f_message);
         return false;
     }
 
     int user_id = values["id"].toInt();
-    status->set_status(StatusMsg::AUTH_SUCCESS);
-    status->set_user_id(user_id);
-    status->set_user_login(login.toStdString());
+    prepare_status_msg(answer, StatusMsg::AUTH_SUCCESS, user_id, login.toStdString());
     ObjectDAO<UserBuilder, UserHandler> friend_list;
     QVector<QString> friends = friend_list.get_friends(user_id);
     for (int i = 0; i < friends.size(); i++) {
@@ -228,15 +188,10 @@ bool hackserver::auth(const Package& msg, QTcpSocket* user) {
             continue;
         }
         Package* user_online = online_list.add_pack();
-        user_online->set_sender_id(-1);
         user_online->set_host_id(user_id);
-        StatusMsg* online_user = new StatusMsg;
-        online_user->set_status(StatusMsg::CONNECTED);
         ObjectDAO<UserBuilder, UserHandler> obj_dao;
         QMap<QString, QString> values = obj_dao.get_by_id(friend_id);
-        online_user->set_user_id(friend_id);
-        online_user->set_user_login(values["login"].toStdString());
-        user_online->set_allocated_status_msg(online_user);
+        prepare_status_msg(user_online, StatusMsg::CONNECTED, friend_id, values["login"].toStdString());
     }
 
     QByteArray f_message(online_list.SerializeAsString().c_str(), online_list.ByteSize());
@@ -266,4 +221,13 @@ void hackserver::disconnect() {
     }
     clients_map.erase(num);
     send_everyone_disconnected(num);
+}
+
+void hackserver::prepare_status_msg(Package* package, StatusMsg::Status status, int user_id, std::string user_login) {
+    package->set_sender_id(-1);
+    StatusMsg* status_msg = new StatusMsg;
+    status_msg->set_status(status);
+    status_msg->set_user_id(user_id);
+    status_msg->set_user_login(user_login);
+    package->set_allocated_status_msg(status_msg);
 }

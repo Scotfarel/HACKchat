@@ -28,7 +28,6 @@ void Client::on_send_button_clicked() {
     }
     PackageList list;
     Package* msg = list.add_pack();
-    msg->set_sender_id(id);
     int send_to = -1;
     if (!ui->online->selectedItems().empty()) {
         for (auto user : users_online.toStdMap()) {
@@ -40,16 +39,8 @@ void Client::on_send_button_clicked() {
     }
 
     msg->set_host_id(send_to);
-    TextMsg* text = new TextMsg;
-    text->set_is_feature(false);
-    text->set_msg_text(ui->msg_edit->text().toStdString());
+    prepare_text_msg(msg, false, ui->msg_edit->text().toStdString());
 
-    Timestamp* date = new Timestamp;
-    size_t local_time = time(NULL) + 10800;
-    date->set_seconds(local_time);
-    date->set_nanos(0);
-    text->set_allocated_date(date);
-    msg->set_allocated_text_msg(text);
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);
     show_msg(*msg);
@@ -125,7 +116,6 @@ void Client::on_msg_edit_textEdited(const QString &arg1)
 {
     PackageList list;
     Package* msg = list.add_pack();
-    msg->set_sender_id(id);
 
     int send_to = -1;
     if (!ui->online->selectedItems().empty()) {
@@ -138,10 +128,7 @@ void Client::on_msg_edit_textEdited(const QString &arg1)
     }
 
     msg->set_host_id(send_to);
-    TextMsg* text = new TextMsg;
-    text->set_is_feature(true);
-    text->set_msg_text(arg1.toStdString());
-    msg->set_allocated_text_msg(text);
+    prepare_text_msg(msg, true, arg1.toStdString());
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);
 }
@@ -166,16 +153,9 @@ void Client::on_log_in_button_pressed()
 void Client::send_user_info(StatusMsg::Status status) {
     PackageList list;
     Package* pckg = list.add_pack();
-    pckg->set_sender_id(id);
-    pckg->set_host_id(-1);
-    StatusMsg* status_msg = new StatusMsg;
-    status_msg->set_status(status);
-    status_msg->set_user_id(id);
-    status_msg->set_user_login(ui->login_line->text().toStdString());
+    std::string pass = QCryptographicHash::hash(ui->password_line->text().toUtf8(), QCryptographicHash::Md5).toStdString();
+    prepare_status_msg(pckg, status, id, ui->login_line->text().toStdString(), pass);
 
-    QByteArray pass = QCryptographicHash::hash(ui->password_line->text().toUtf8(), QCryptographicHash::Md5);
-    status_msg->set_user_pass(pass);
-    pckg->set_allocated_status_msg(status_msg);
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);
 }
@@ -235,12 +215,7 @@ void Client::on_search_line_textEdited(const QString &arg1)
     ui->online->clear();
     PackageList list;
     Package* pckg = list.add_pack();
-    pckg->set_sender_id(id);
-    pckg->set_host_id(-1);
-    StatusMsg* status_msg = new StatusMsg;
-    status_msg->set_status(StatusMsg::SEARCH);
-    status_msg->set_user_login(arg1.toStdString());
-    pckg->set_allocated_status_msg(status_msg);
+    prepare_status_msg(pckg, StatusMsg::SEARCH, 0, arg1.toStdString());
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);
 }
@@ -249,12 +224,7 @@ void Client::on_online_itemDoubleClicked(QListWidgetItem *item)
 {
     PackageList msg;
     Package* pckg = msg.add_pack();
-    pckg->set_sender_id(id);
-    pckg->set_host_id(-1);
-    StatusMsg* status_msg = new StatusMsg;
-    status_msg->set_status(StatusMsg::ADD);
-    status_msg->set_user_login(item->text().toStdString());
-    pckg->set_allocated_status_msg(status_msg);
+    prepare_status_msg(pckg, StatusMsg::ADD, 0, item->text().toStdString());
     QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
     tcpSock->write(f_message);
 }
@@ -288,4 +258,32 @@ void Client::first_connect() {
     connect(tcpSock, SIGNAL(readyRead()), this, SLOT(leer()));
     connect(tcpSock, SIGNAL(disconnected()), this, SLOT(disconnect()));
     connected = true;
+}
+
+void Client::prepare_text_msg(Package* package, bool is_feature, std::string msg_text) {
+    package->set_sender_id(id);
+    TextMsg* text = new TextMsg;
+    text->set_is_feature(is_feature);
+    text->set_msg_text(msg_text);
+    if (!is_feature) {
+        Timestamp* date = new Timestamp;
+        size_t local_time = time(NULL) + 10800;
+        date->set_seconds(local_time);
+        date->set_nanos(0);
+        text->set_allocated_date(date);
+    }
+    package->set_allocated_text_msg(text);
+}
+
+void Client::prepare_status_msg(Package* package, StatusMsg::Status status, int user_id, std::string user_login, std::string hash) {
+    package->set_sender_id(id);
+    package->set_host_id(-1);
+    StatusMsg* status_msg = new StatusMsg;
+    status_msg->set_status(status);
+    status_msg->set_user_id(user_id);
+    status_msg->set_user_login(user_login);
+    if (hash != "") {
+        status_msg->set_user_pass(hash);
+    }
+    package->set_allocated_status_msg(status_msg);
 }

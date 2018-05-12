@@ -46,6 +46,8 @@ private:
     void send_user_info(StatusMsg::Status status);
     void show_msg(const Package& p);
     void first_connect();
+    void prepare_text_msg(Package* package, bool is_feature, std::string msg_text);
+    void prepare_status_msg(Package* package, StatusMsg::Status status, int user_id, std::string user_login, std::string hash = "");
 private slots:
     void on_send_button_clicked();
     void on_msg_edit_textEdited(const QString &arg1);

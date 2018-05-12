@@ -53,8 +53,8 @@ private:
     void send_everyone_new(int id, std::string login);
     void send_everyone_disconnected(int id);
     bool auth(const Package& msg, QTcpSocket* user);
-    bool register_user(const Package& msg, QTcpSocket* user);
-
+    void register_user(const Package& msg, QTcpSocket* user);
+    void prepare_status_msg(Package* package, StatusMsg::Status status, int user_id = 0, std::string user_login = "");
 };
 
 #endif // HACKSERVER_H
