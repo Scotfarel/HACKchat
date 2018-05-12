@@ -120,8 +120,7 @@ void Client::leer() {
     }
 }
 
-void Client::on_msg_edit_textEdited(const QString &arg1)
-{
+void Client::on_msg_edit_textEdited(const QString &arg1) {
     PackageList list;
     Package* msg = list.add_pack();
 
@@ -141,8 +140,7 @@ void Client::on_msg_edit_textEdited(const QString &arg1)
     tcpSock->write(f_message);
 }
 
-void Client::on_log_in_button_pressed()
-{
+void Client::on_log_in_button_pressed() {
     if (ui->login_line->text().isEmpty()) {
         ui->msg_label->setText("Login field is empty!");
         return;
@@ -162,31 +160,29 @@ void Client::on_log_in_button_pressed()
 
 void Client::send_user_info(StatusMsg::Status status) {
     PackageList list;
+    QByteArray salt = QCryptographicHash::hash("is_it+salt", QCryptographicHash::Md5).toHex();
     Package* pckg = list.add_pack();
-    std::string pass = QCryptographicHash::hash(ui->password_line->text().toUtf8(), QCryptographicHash::Md5).toStdString();
-    prepare_status_msg(pckg, status, id, ui->login_line->text().toStdString(), pass);
+    QByteArray pass = QCryptographicHash::hash(ui->password_line->text().toUtf8(), QCryptographicHash::Md5);
+    std::string result = QCryptographicHash::hash(salt+pass, QCryptographicHash::Md5).toStdString();
+    prepare_status_msg(pckg, status, id, ui->login_line->text().toStdString(), result);
 
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);
 }
 
-void Client::on_login_line_textEdited()
-{
+void Client::on_login_line_textEdited() {
     ui->msg_label->clear();
 }
 
-void Client::on_password_line_textEdited()
-{
+void Client::on_password_line_textEdited() {
     ui->msg_label->clear();
 }
 
-void Client::on_msg_edit_returnPressed()
-{
+void Client::on_msg_edit_returnPressed() {
     ui->send_button->clicked();
 }
 
-void Client::on_sign_in_button_pressed()
-{
+void Client::on_sign_in_button_pressed() {
     if (!connected) {
         if(!first_connect()) {
             return;
@@ -213,8 +209,7 @@ void Client::show_msg(const Package& p) {
     ui->messages->appendPlainText(QString::fromStdString(p.text_msg().msg_text()));
 }
 
-void Client::on_search_line_textEdited(const QString &arg1)
-{
+void Client::on_search_line_textEdited(const QString &arg1) {
     if (arg1.isEmpty()) {
         ui->info_label->clear();
         ui->online_label->setText("Friends online:");
@@ -233,8 +228,10 @@ void Client::on_search_line_textEdited(const QString &arg1)
     tcpSock->write(f_message);
 }
 
-void Client::on_online_itemDoubleClicked(QListWidgetItem *item)
-{
+void Client::on_online_itemDoubleClicked(QListWidgetItem *item) {
+    if (ui->search_line->text().isEmpty()) {
+        return;
+    }
     PackageList msg;
     Package* pckg = msg.add_pack();
     prepare_status_msg(pckg, StatusMsg::ADD, 0, item->text().toStdString());
@@ -243,8 +240,7 @@ void Client::on_online_itemDoubleClicked(QListWidgetItem *item)
     delete item;
 }
 
-void Client::on_online_itemSelectionChanged()
-{
+void Client::on_online_itemSelectionChanged() {
     if (ui->online->selectedItems().count() == 0) {
         ui->messages->hide();
         ui->messages_label->hide();
@@ -308,8 +304,7 @@ void Client::prepare_status_msg(Package* package, StatusMsg::Status status, int 
     package->set_allocated_status_msg(status_msg);
 }
 
-void Client::on_log_out_button_released()
-{
+void Client::on_log_out_button_released() {
     users_online.clear();
     id = 0;
     tcpSock->disconnectFromHost();

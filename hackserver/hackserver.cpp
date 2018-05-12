@@ -21,6 +21,11 @@ hackserver::hackserver(QWidget *parent) :
 
 hackserver::~hackserver() {
     delete ui;
+    for (auto& it : clients_map) {
+        delete it.second;
+        clients_map.erase(it.first);
+    }
+    delete tcpServ;
 }
 
 void hackserver::connect_new() {
