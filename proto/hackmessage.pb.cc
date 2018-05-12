@@ -209,21 +209,21 @@ void AddDescriptorsImpl() {
       "\n\021hackmessage.proto\022\010hackchat\032\037google/pr"
       "otobuf/timestamp.proto\"Y\n\007TextMsg\022\020\n\010msg"
       "_text\030\001 \001(\t\022\022\n\nis_feature\030\002 \001(\010\022(\n\004date\030"
-      "\003 \001(\0132\032.google.protobuf.Timestamp\"\353\001\n\tSt"
+      "\003 \001(\0132\032.google.protobuf.Timestamp\"\365\001\n\tSt"
       "atusMsg\022*\n\006status\030\001 \001(\0162\032.hackchat.Statu"
       "sMsg.Status\022\017\n\007user_id\030\002 \001(\005\022\022\n\nuser_log"
-      "in\030\003 \001(\t\022\021\n\tuser_pass\030\004 \001(\014\"z\n\006Status\022\020\n"
-      "\014AUTH_SUCCESS\020\000\022\016\n\nWRONG_PASS\020\001\022\023\n\017LOGIN"
-      "_NOT_FOUND\020\002\022\r\n\tCONNECTED\020\003\022\020\n\014DISCONNEC"
-      "TED\020\004\022\014\n\010NEW_USER\020\005\022\n\n\006SEARCH\020\006\"\206\001\n\007Pack"
-      "age\022\021\n\tsender_id\030\001 \001(\005\022\017\n\007host_id\030\002 \001(\005\022"
-      "%\n\010text_msg\030\003 \001(\0132\021.hackchat.TextMsgH\000\022)"
-      "\n\nstatus_msg\030\004 \001(\0132\023.hackchat.StatusMsgH"
-      "\000B\005\n\003msg\".\n\013PackageList\022\037\n\004pack\030\001 \003(\0132\021."
-      "hackchat.Packageb\006proto3"
+      "in\030\003 \001(\t\022\021\n\tuser_pass\030\004 \001(\014\"\203\001\n\006Status\022\020"
+      "\n\014AUTH_SUCCESS\020\000\022\022\n\016AUTH_UNSUCCESS\020\001\022\017\n\013"
+      "LOGIN_FOUND\020\002\022\r\n\tCONNECTED\020\003\022\020\n\014DISCONNE"
+      "CTED\020\004\022\014\n\010NEW_USER\020\005\022\n\n\006SEARCH\020\006\022\007\n\003ADD\020"
+      "\007\"\206\001\n\007Package\022\021\n\tsender_id\030\001 \001(\005\022\017\n\007host"
+      "_id\030\002 \001(\005\022%\n\010text_msg\030\003 \001(\0132\021.hackchat.T"
+      "extMsgH\000\022)\n\nstatus_msg\030\004 \001(\0132\023.hackchat."
+      "StatusMsgH\000B\005\n\003msg\".\n\013PackageList\022\037\n\004pac"
+      "k\030\001 \003(\0132\021.hackchat.Packageb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 584);
+      descriptor, 594);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "hackmessage.proto", &protobuf_RegisterTypes);
   ::protobuf_google_2fprotobuf_2ftimestamp_2eproto::AddDescriptors();
@@ -254,6 +254,7 @@ bool StatusMsg_Status_IsValid(int value) {
     case 4:
     case 5:
     case 6:
+    case 7:
       return true;
     default:
       return false;
@@ -262,12 +263,13 @@ bool StatusMsg_Status_IsValid(int value) {
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
 const StatusMsg_Status StatusMsg::AUTH_SUCCESS;
-const StatusMsg_Status StatusMsg::WRONG_PASS;
-const StatusMsg_Status StatusMsg::LOGIN_NOT_FOUND;
+const StatusMsg_Status StatusMsg::AUTH_UNSUCCESS;
+const StatusMsg_Status StatusMsg::LOGIN_FOUND;
 const StatusMsg_Status StatusMsg::CONNECTED;
 const StatusMsg_Status StatusMsg::DISCONNECTED;
 const StatusMsg_Status StatusMsg::NEW_USER;
 const StatusMsg_Status StatusMsg::SEARCH;
+const StatusMsg_Status StatusMsg::ADD;
 const StatusMsg_Status StatusMsg::Status_MIN;
 const StatusMsg_Status StatusMsg::Status_MAX;
 const int StatusMsg::Status_ARRAYSIZE;

@@ -13,12 +13,13 @@ message TextMsg {
 message StatusMsg {
 	enum Status {
 		AUTH_SUCCESS = 0;
-		WRONG_PASS = 1;
-		LOGIN_NOT_FOUND = 2;
+		AUTH_UNSUCCESS = 1;
+		LOGIN_FOUND = 2;
 		CONNECTED = 3;
 		DISCONNECTED = 4;
 		NEW_USER = 5;
 		SEARCH = 6;
+		ADD = 7;
 	}
 	Status status = 1;
 	int32 user_id = 2;

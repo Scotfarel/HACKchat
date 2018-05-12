@@ -8,6 +8,14 @@ Client::Client(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->login_line->setFocus();
+
+    ui->messages->hide();
+    ui->messages_label->hide();
+    ui->msg_edit->hide();
+    ui->send_button->hide();
+    ui->feature->hide();
+
+    ui->search_line->setPlaceholderText("Friend search");
 }
 
 Client::~Client() {
@@ -49,12 +57,16 @@ void Client::on_send_button_clicked() {
 }
 
 void Client::msg_from_server(const Package& msg) { // switch case pls
-    if (msg.status_msg().status() == StatusMsg::LOGIN_NOT_FOUND) {
-        ui->msg_label->setText("Wrong login! Maybe register?");
+    if (msg.status_msg().status() == StatusMsg::AUTH_UNSUCCESS) {
+        ui->msg_label->setText("Wrong password or login");
         return;
     }
-    if (msg.status_msg().status() == StatusMsg::WRONG_PASS) {
-        ui->msg_label->setText("Wrong password!");
+    if (msg.status_msg().status() == StatusMsg::NEW_USER) {
+        ui->msg_label->setText("Register success");
+        return;
+    }
+    if (msg.status_msg().status() == StatusMsg::LOGIN_FOUND) {
+        ui->msg_label->setText("Try another login");
         return;
     }
     if (msg.status_msg().status() == StatusMsg::AUTH_SUCCESS) {
@@ -64,8 +76,11 @@ void Client::msg_from_server(const Package& msg) { // switch case pls
         this->setWindowTitle(QString::fromStdString(msg.status_msg().user_login()));
     }
     if (msg.status_msg().status() == StatusMsg::CONNECTED) {
-        ui->online->addItem(QString::fromStdString(msg.status_msg().user_login()));
         users_online.insert((int)msg.status_msg().user_id(), QString::fromStdString(msg.status_msg().user_login()));
+        if (!ui->online_label->text().compare("Search result:")) {
+            return;
+        }
+        ui->online->addItem(QString::fromStdString(msg.status_msg().user_login()));
     }
     if (msg.status_msg().status() == StatusMsg::DISCONNECTED) {
         for (int i = 0; i < ui->online->count(); i++) {
@@ -142,11 +157,8 @@ void Client::on_log_in_button_pressed()
         return;
     }
 
-    if (first_connect == false) {
-        tcpSock = new QTcpSocket(this);
-        tcpSock->connectToHost(QHostAddress(ui->address_line->text()), ui->port_line->text().toInt());
-        connect(tcpSock, SIGNAL(readyRead()), this, SLOT(leer()));
-        first_connect = true;
+    if (!connected) {
+        first_connect();
     }
     send_user_info(StatusMsg::CONNECTED);
 }
@@ -185,6 +197,9 @@ void Client::on_msg_edit_returnPressed()
 
 void Client::on_sign_in_button_pressed()
 {
+    if (!connected) {
+        first_connect();
+    }
     send_user_info(StatusMsg::NEW_USER);
 }
 
@@ -192,6 +207,8 @@ void Client::show_msg(const Package& p) {
     QString first_str;
     if (p.sender_id() == id) {
         first_str = nickname;
+        first_str.append(" to ");
+        first_str.append(users_online[p.host_id()]);
     } else {
         first_str = users_online[p.sender_id()];
     }
@@ -226,4 +243,49 @@ void Client::on_search_line_textEdited(const QString &arg1)
     pckg->set_allocated_status_msg(status_msg);
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
     tcpSock->write(f_message);
+}
+
+void Client::on_online_itemDoubleClicked(QListWidgetItem *item)
+{
+    PackageList msg;
+    Package* pckg = msg.add_pack();
+    pckg->set_sender_id(id);
+    pckg->set_host_id(-1);
+    StatusMsg* status_msg = new StatusMsg;
+    status_msg->set_status(StatusMsg::ADD);
+    status_msg->set_user_login(item->text().toStdString());
+    pckg->set_allocated_status_msg(status_msg);
+    QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
+    tcpSock->write(f_message);
+}
+
+void Client::on_online_itemSelectionChanged()
+{
+    if (ui->online->selectedItems().count() == 0) {
+        ui->messages->hide();
+        ui->messages_label->hide();
+        ui->msg_edit->hide();
+        ui->send_button->hide();
+        ui->feature->hide();
+    }
+    if (ui->online->selectedItems().count() == 1) {
+        ui->messages->show();
+        ui->messages_label->show();
+        ui->msg_edit->show();
+        ui->send_button->show();
+        ui->feature->show();
+    }
+}
+
+void Client::disconnect() {
+    ui->stackedWidget->setCurrentIndex(0);
+    ui->msg_label->setText("Server shut down :(");
+}
+
+void Client::first_connect() {
+    tcpSock = new QTcpSocket(this);
+    tcpSock->connectToHost(QHostAddress(ui->address_line->text()), ui->port_line->text().toInt());
+    connect(tcpSock, SIGNAL(readyRead()), this, SLOT(leer()));
+    connect(tcpSock, SIGNAL(disconnected()), this, SLOT(disconnect()));
+    connected = true;
 }

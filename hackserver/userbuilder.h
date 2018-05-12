@@ -33,6 +33,12 @@ public:
 
     QString friend_search(QString searchStr) {
         QString query = QString("SELECT rowid, login FROM users WHERE login LIKE '%%1%'").arg(searchStr);
+
+        return query;
+    }
+
+    QString add_friend(int id1, int id2) {
+        QString query = QString("INSERT INTO friends VALUES ('%1', '%2')").arg(QString::number(id1), QString::number(id2));
         return query;
     }
 };

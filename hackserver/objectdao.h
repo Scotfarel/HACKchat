@@ -75,6 +75,11 @@ public:
             execute();
         }
     }
+    void add_friend(int id1, int id2) {
+        if (query.prepare(builder->add_friend(id1, id2))) {
+            execute();
+        }
+    }
 };
 
 #endif // OBJECTDAO_H

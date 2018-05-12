@@ -8,6 +8,7 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 #include <QCryptographicHash>
+#include <QListWidgetItem>
 
 #include "../proto/hackmessage.pb.h"
 
@@ -32,17 +33,19 @@ public:
 
 public slots:
     void leer();
+    void disconnect();
 
 private:
     Ui::Client *ui;
     QTcpSocket *tcpSock;
     QMap<int, QString> users_online;
     QString nickname;
-    bool first_connect = false; // i will change it
+    bool connected = false;
     int id;
     void msg_from_server(const Package& msg);
     void send_user_info(StatusMsg::Status status);
     void show_msg(const Package& p);
+    void first_connect();
 private slots:
     void on_send_button_clicked();
     void on_msg_edit_textEdited(const QString &arg1);
@@ -52,6 +55,8 @@ private slots:
     void on_msg_edit_returnPressed();
     void on_sign_in_button_pressed();
     void on_search_line_textEdited(const QString &arg1);
+    void on_online_itemDoubleClicked(QListWidgetItem *item);
+    void on_online_itemSelectionChanged();
 };
 
 #endif // CLIENT_H
