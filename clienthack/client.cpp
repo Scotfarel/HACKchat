@@ -241,6 +241,7 @@ void Client::on_online_itemDoubleClicked(QListWidgetItem *item) {
 }
 
 void Client::on_online_itemSelectionChanged() {
+    ui->feature->clear();
     if (ui->online->selectedItems().count() == 0) {
         ui->messages->hide();
         ui->messages_label->hide();
@@ -310,4 +311,26 @@ void Client::on_log_out_button_released() {
     tcpSock->disconnectFromHost();
     connected = false;
     ui->msg_label->clear();
+}
+
+void Client::on_online_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+    if (!previous) {
+        return;
+    }
+    if (ui->msg_edit->text().isEmpty()) {
+        return;
+    }
+    PackageList msg;
+    Package* package = msg.add_pack();
+    for (auto& u : users_online.toStdMap()) {
+        if (!QString::compare(u.second, previous->text())) {
+         package->set_host_id(u.first);
+         break;
+        }
+    }
+    prepare_text_msg(package, true, "");
+    QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
+    tcpSock->write(f_message);
+    ui->msg_edit->clear();
 }

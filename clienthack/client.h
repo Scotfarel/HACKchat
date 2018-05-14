@@ -60,6 +60,7 @@ private slots:
     void on_online_itemDoubleClicked(QListWidgetItem *item);
     void on_online_itemSelectionChanged();
     void on_log_out_button_released();
+    void on_online_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
 };
 
 #endif // CLIENT_H
