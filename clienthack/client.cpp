@@ -268,6 +268,8 @@ void Client::on_online_itemSelectionChanged() {
 }
 
 void Client::disconnect() {
+    connected = false;
+    users_online.clear();
     ui->stackedWidget->setCurrentIndex(0);
     ui->msg_label->setText("Server shut down :(");
 }
@@ -315,6 +317,9 @@ void Client::prepare_status_msg(Package* package, StatusMsg::Status status, int 
 }
 
 void Client::on_log_out_button_released() {
+    ui->msg_edit->clear();
+    ui->search_line->clear();
+    ui->online->clear();
     users_online.clear();
     id = 0;
     tcpSock->disconnectFromHost();
