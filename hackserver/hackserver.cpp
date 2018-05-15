@@ -35,7 +35,7 @@ void hackserver::connect_new() {
 }
 
 void hackserver::send_everyone_new(int id, std::string login) {
-    ObjectDAO<UserBuilder, UserHandler> obj_dao;
+    ObjectDAO obj_dao;
     QVector<QString> friends = obj_dao.get_friends(id);
     PackageList list;
     Package* msg = list.add_pack();
@@ -78,13 +78,8 @@ void hackserver::read() {
         ui->plainTextEdit->appendPlainText(QString::fromStdString(text));
         if (p.host_id() != -1) {
             if (!p.text_msg().is_feature()) {
-                QVector<QString> values;
-                values.append(QString::number(p.sender_id()));
-                values.append(QString::number(p.host_id()));
-                values.append(QString::fromStdString(p.text_msg().msg_text()));
-                values.append(QString::number(TimeUtil::TimestampToSeconds(p.text_msg().date())));
-                ObjectDAO<MessageBuilder, MessageHandler> obj_dao;
-                obj_dao.insert(values);
+                ObjectDAO obj_dao;
+                obj_dao.add_message(p.sender_id(), p.host_id(), QString::fromStdString(p.text_msg().msg_text()), QString::number(TimeUtil::TimestampToSeconds(p.text_msg().date())));
             }
             auto need_to = clients_map.find(p.host_id());
             need_to->second->write(buffer);
@@ -107,20 +102,23 @@ void hackserver::message_for_server(const Package& p, QTcpSocket* client) {
         break;
     }
     case StatusMsg::SEARCH: {
-        ObjectDAO<UserBuilder, UserHandler> search_obj;
+        ObjectDAO search_obj;
         QMap<QString, QString> friends = search_obj.friend_search(QString::fromStdString(p.status_msg().user_login()));
         PackageList ans;
         Package* empty_pckg = ans.add_pack();
         empty_pckg->set_host_id(p.sender_id());
+        QVector<QString> already_friends = search_obj.get_friends(p.sender_id());
+        friends.remove(QString::number(p.sender_id()));
+        for (auto f : friends.toStdMap()) {
+            if (already_friends.contains(f.first)) {
+                friends.remove(f.first);
+            }
+        }
         if (friends.isEmpty()) {
             prepare_status_msg(empty_pckg, StatusMsg::NOT_FOUND);
         } else {
             prepare_status_msg(empty_pckg, StatusMsg::SEARCH);
-            QVector<QString> already_friends = search_obj.get_friends(p.sender_id());
             for (auto& it : friends.toStdMap()) {
-                if (p.sender_id() == it.first.toInt() || already_friends.contains(it.first)) {
-                    continue;
-                }
                 Package* pckg = ans.add_pack();
                 pckg->set_host_id(p.sender_id());
                 prepare_status_msg(pckg, StatusMsg::SEARCH, it.first.toInt(), it.second.toStdString());
@@ -131,8 +129,8 @@ void hackserver::message_for_server(const Package& p, QTcpSocket* client) {
         break;
     }
     case StatusMsg::ADD: {
-        ObjectDAO<UserBuilder, UserHandler> user;
-        QMap<QString, QString> data = user.get_by_log(QString::fromStdString(p.status_msg().user_login()));
+        ObjectDAO user;
+        QMap<QString, QString> data = user.get_user_by_login(QString::fromStdString(p.status_msg().user_login()));
         int friend_id = data["id"].toInt();
         user.add_friend(p.sender_id(), friend_id);
         if (clients_map[friend_id]) {
@@ -144,7 +142,7 @@ void hackserver::message_for_server(const Package& p, QTcpSocket* client) {
             client->write(f_message);
 
             pck->set_host_id(friend_id);
-            data = user.get_by_id(p.sender_id());
+            data = user.get_user_by_id(p.sender_id());
             prepare_status_msg(pck, StatusMsg::CONNECTED, p.sender_id(), (data["login"].toStdString()));
             QByteArray f_message_second(msg.SerializeAsString().c_str(), msg.ByteSize());
             clients_map.at(friend_id)->write(f_message_second);
@@ -164,15 +162,12 @@ void hackserver::register_user(const Package& msg, QTcpSocket* user) {
     Package* answer = list.add_pack();
     answer->set_host_id(msg.sender_id());
 
-    ObjectDAO<UserBuilder, UserHandler> obj_dao;
-    QMap<QString, QString> users = obj_dao.get_by_log(login);
+    ObjectDAO obj_dao;
+    QMap<QString, QString> users = obj_dao.get_user_by_login(login);
     if (!users.empty()) {
         prepare_status_msg(answer, StatusMsg::LOGIN_FOUND);
     } else {
-        QVector<QString> values;
-        values.append(login);
-        values.append(password);
-        obj_dao.insert(values);
+        obj_dao.add_user(login, password);
         prepare_status_msg(answer, StatusMsg::NEW_USER);
     }
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
@@ -184,8 +179,8 @@ bool hackserver::auth(const Package& msg, QTcpSocket* user) {
     QString login = QString::fromStdString(msg.status_msg().user_login());
     QByteArray password(msg.status_msg().user_pass().c_str(), msg.status_msg().user_pass().length());
 
-    ObjectDAO<UserBuilder, UserHandler> obj_dao;
-    QMap<QString, QString> values = obj_dao.get_by_log(login);
+    ObjectDAO obj_dao;
+    QMap<QString, QString> values = obj_dao.get_user_by_login(login);
     PackageList online_list;
     Package* answer = online_list.add_pack();
     answer->set_host_id(0);
@@ -199,7 +194,7 @@ bool hackserver::auth(const Package& msg, QTcpSocket* user) {
 
     int user_id = values["id"].toInt();
     prepare_status_msg(answer, StatusMsg::AUTH_SUCCESS, user_id, login.toStdString());
-    ObjectDAO<UserBuilder, UserHandler> friend_list;
+    ObjectDAO friend_list;
     QVector<QString> friends = friend_list.get_friends(user_id);
     for (int i = 0; i < friends.size(); i++) {
         int friend_id = friends.at(i).toInt();
@@ -208,8 +203,8 @@ bool hackserver::auth(const Package& msg, QTcpSocket* user) {
         }
         Package* user_online = online_list.add_pack();
         user_online->set_host_id(user_id);
-        ObjectDAO<UserBuilder, UserHandler> obj_dao;
-        QMap<QString, QString> values = obj_dao.get_by_id(friend_id);
+        ObjectDAO obj_dao;
+        QMap<QString, QString> values = obj_dao.get_user_by_id(friend_id);
         prepare_status_msg(user_online, StatusMsg::CONNECTED, friend_id, values["login"].toStdString());
     }
 

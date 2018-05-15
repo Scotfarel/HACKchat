@@ -19,7 +19,6 @@ Client::Client(QWidget *parent) :
 }
 
 Client::~Client() {
-    ui->msg_edit->clear();
     delete tcpSock;
     delete ui;
 }

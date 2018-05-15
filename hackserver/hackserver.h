@@ -14,10 +14,6 @@
 #include <QSqlError>
 
 #include "../proto/hackmessage.pb.h"
-#include "userhandler.h"
-#include "userbuilder.h"
-#include "messagehandler.h"
-#include "messagebuilder.h"
 #include "objectdao.h"
 
 using hackchat::Package;

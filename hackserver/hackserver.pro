@@ -16,14 +16,11 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
         hackserver.cpp \
-        ../proto/hackmessage.pb.cc
+        ../proto/hackmessage.pb.cc \
+    objectdao.cpp
 
 HEADERS  += hackserver.h \
           ../proto/hackmessage.pb.h \
-    objectdao.h \
-    userhandler.h \
-    userbuilder.h \
-    messagebuilder.h \
-    messagehandler.h
+    objectdao.h
 
 FORMS    += hackserver.ui

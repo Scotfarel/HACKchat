@@ -5,81 +5,29 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QMap>
+#include <QVector>
 
-template <typename Builder, typename Handler>
 class ObjectDAO {
 private:
-    Builder* builder;
-    Handler* handler;
+    QString user_table = "users";
+    QString friends_table = "friends";
+    QString message_table = "messages";
+    QString user_id_col = "rowid";
+    QString login_col = "login";
+    QString pass_col = "p_hash";
     QSqlQuery query;
     QMap<QString, QString> values;
     QVector<QString> vector_values;
+    void execute();
+    bool move();
 public:
-    void execute() {
-        if (!query.exec()) {
-            qDebug() << query.lastError().text();
-            return;
-        }
-    }
-
-    bool move() {
-        if (!query.next()) {
-            qDebug() << "Answer is empty.";
-            return false;
-        }
-        return true;
-    }
-
-    QMap<QString, QString> get_by_id(int id) {
-        if (query.prepare(builder->get(id))) {
-            execute();
-            if (move()) {
-                handler->fill_by_id(query, &values);
-            }
-        }
-        return values;
-    }
-
-    QVector<QString> get_friends(int id) {
-        if (query.prepare(builder->get_first_friends(id))) {
-            execute();
-            handler->fill_first_friends(query, &vector_values);
-        }
-        if (query.prepare(builder->get_second_friends(id))) {
-            execute();
-            handler->fill_second_friends(query, &vector_values);
-        }
-        return vector_values;
-    }
-
-    QMap<QString, QString> get_by_log(QString login) {
-        if (query.prepare(builder->by_log(login))) {
-            execute();
-            if (move()) {
-                handler->fill_by_login(query, &values);
-            }
-        }
-        return values;
-    }
-
-    QMap<QString, QString> friend_search(QString searchStr) {
-        if (query.prepare(builder->friend_search(searchStr))) {
-            execute();
-            handler->friend_found(query, &values);
-        }
-        return values;
-    }
-
-    void insert(QVector<QString> cols) {
-        if (query.prepare(builder->insert(cols))) {
-            execute();
-        }
-    }
-    void add_friend(int id1, int id2) {
-        if (query.prepare(builder->add_friend(id1, id2))) {
-            execute();
-        }
-    }
+    QMap<QString, QString> get_user_by_id(int id);
+    QMap<QString, QString> get_user_by_login(QString login);
+    void add_user(QString login, QString pass);
+    QMap<QString, QString> friend_search(QString searchStr);
+    QVector<QString> get_friends(int id);
+    void add_friend(int id1, int id2);
+    void add_message(int sender_id, int host_id, QString text, QString time);
 };
 
 #endif // OBJECTDAO_H
