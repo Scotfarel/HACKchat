@@ -77,6 +77,10 @@ void hackserver::read() {
         text.append(p.text_msg().msg_text());
         ui->plainTextEdit->appendPlainText(QString::fromStdString(text));
         if (p.host_id() != -1) {
+            if (clients_map.find(p.host_id()) == clients_map.end()) {
+                qDebug() << "User disconnected!";
+                continue;
+            }
             if (!p.text_msg().is_feature()) {
                 ObjectDAO obj_dao;
                 obj_dao.add_message(p.sender_id(), p.host_id(), QString::fromStdString(p.text_msg().msg_text()), QString::number(TimeUtil::TimestampToSeconds(p.text_msg().date())));
