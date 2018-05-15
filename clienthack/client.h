@@ -42,6 +42,7 @@ private:
     QString nickname;
     bool connected = false;
     int id;
+    QString search_res = "Search result:";
     void msg_from_server(const Package& msg);
     void send_user_info(StatusMsg::Status status);
     void show_msg(const Package& p);

@@ -71,7 +71,7 @@ void Client::msg_from_server(const Package& msg) {
     }
     case StatusMsg::CONNECTED: {
         users_online.insert((int)msg.status_msg().user_id(), QString::fromStdString(msg.status_msg().user_login()));
-        if (!ui->online_label->text().compare("Search result:")) {
+        if (!ui->online_label->text().compare(search_res)) {
             return;
         }
         ui->online->addItem(QString::fromStdString(msg.status_msg().user_login()));
@@ -228,7 +228,7 @@ void Client::on_search_line_textEdited(const QString &arg1) {
         }
         return;
     }
-    ui->online_label->setText("Search result:");
+    ui->online_label->setText(search_res);
     ui->online->clear();
     PackageList list;
     Package* pckg = list.add_pack();
@@ -258,7 +258,7 @@ void Client::on_online_itemSelectionChanged() {
         ui->send_button->hide();
         ui->feature->hide();
     }
-    if (ui->online->selectedItems().count() == 1) {
+    if (ui->online->selectedItems().count() == 1 && ui->online_label->text().compare(search_res) != 0) {
         ui->messages->show();
         ui->messages_label->show();
         ui->msg_edit->show();
