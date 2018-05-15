@@ -19,6 +19,7 @@ Client::Client(QWidget *parent) :
 }
 
 Client::~Client() {
+    ui->msg_edit->clear();
     delete tcpSock;
     delete ui;
 }
@@ -48,50 +49,59 @@ void Client::on_send_button_clicked() {
     ui->msg_edit->clear();
 }
 
-void Client::msg_from_server(const Package& msg) { // switch case pls
-    if (msg.status_msg().status() == StatusMsg::AUTH_UNSUCCESS) {
+void Client::msg_from_server(const Package& msg) {
+    switch (msg.status_msg().status()) {
+    case StatusMsg::AUTH_UNSUCCESS: {
         ui->msg_label->setText("Wrong password or login");
-        return;
+        break;
     }
-    if (msg.status_msg().status() == StatusMsg::NEW_USER) {
+    case StatusMsg::NEW_USER: {
         ui->msg_label->setText("Register success");
-        return;
+        break;
     }
-    if (msg.status_msg().status() == StatusMsg::LOGIN_FOUND) {
+    case StatusMsg::LOGIN_FOUND: {
         ui->msg_label->setText("Try another login");
-        return;
+        break;
     }
-    if (msg.status_msg().status() == StatusMsg::AUTH_SUCCESS) {
+    case StatusMsg::AUTH_SUCCESS: {
         nickname = ui->login_line->text();
         id = msg.status_msg().user_id();
         ui->stackedWidget->setCurrentIndex(1);
         this->setWindowTitle(QString::fromStdString(msg.status_msg().user_login()));
+        break;
     }
-    if (msg.status_msg().status() == StatusMsg::CONNECTED) {
+    case StatusMsg::CONNECTED: {
         users_online.insert((int)msg.status_msg().user_id(), QString::fromStdString(msg.status_msg().user_login()));
         if (!ui->online_label->text().compare("Search result:")) {
             return;
         }
         ui->online->addItem(QString::fromStdString(msg.status_msg().user_login()));
+        break;
     }
-    if (msg.status_msg().status() == StatusMsg::DISCONNECTED) {
+    case StatusMsg::DISCONNECTED: {
         for (int i = 0; i < ui->online->count(); i++) {
             if (QString::compare(ui->online->item(i)->text(), users_online[msg.status_msg().user_id()]) == 0) {
                 delete ui->online->item(i);
             }
         }
         users_online.remove(msg.status_msg().user_id());
+        break;
     }
-    if (msg.status_msg().status() == StatusMsg::NOT_FOUND) {
+    case StatusMsg::NOT_FOUND: {
         ui->info_label->setText("Users not found");
+        break;
     }
-    if (msg.status_msg().status() == StatusMsg::SEARCH) {
+    case StatusMsg::SEARCH: {
         if (msg.status_msg().user_id() == 0) {
             ui->online->clear();
             return;
         }
         ui->info_label->clear();
         ui->online->addItem(QString::fromStdString(msg.status_msg().user_login()));
+        break;
+    }
+    default:
+        break;
     }
 }
 

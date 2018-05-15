@@ -89,58 +89,70 @@ void hackserver::read() {
             auto need_to = clients_map.find(p.host_id());
             need_to->second->write(buffer);
         } else {
-            if (p.status_msg().status() == StatusMsg::CONNECTED) {
-                if (auth(p, client)) {
-                    client_number++;
-                }
-            }
-            if (p.status_msg().status() == StatusMsg::NEW_USER) {
-                register_user(p, client);
-            }
-            if (p.status_msg().status() == StatusMsg::SEARCH) {
-                ObjectDAO<UserBuilder, UserHandler> search_obj;
-                QMap<QString, QString> friends = search_obj.friend_search(QString::fromStdString(p.status_msg().user_login()));
-                PackageList ans;
-                Package* empty_pckg = ans.add_pack();
-                empty_pckg->set_host_id(p.sender_id());
-                if (friends.isEmpty()) {
-                    prepare_status_msg(empty_pckg, StatusMsg::NOT_FOUND);
-                } else {
-                    prepare_status_msg(empty_pckg, StatusMsg::SEARCH);
-                    QVector<QString> already_friends = search_obj.get_friends(p.sender_id());
-                    for (auto& it : friends.toStdMap()) {
-                        if (p.sender_id() == it.first.toInt() || already_friends.contains(it.first)) {
-                            continue;
-                        }
-                        Package* pckg = ans.add_pack();
-                        pckg->set_host_id(p.sender_id());
-                        prepare_status_msg(pckg, StatusMsg::SEARCH, it.first.toInt(), it.second.toStdString());
-                    }
-                }
-                QByteArray f_message(ans.SerializeAsString().c_str(), ans.ByteSize());
-                client->write(f_message);
-            }
-            if (p.status_msg().status() == StatusMsg::ADD) {
-                ObjectDAO<UserBuilder, UserHandler> user;
-                QMap<QString, QString> data = user.get_by_log(QString::fromStdString(p.status_msg().user_login()));
-                int friend_id = data["id"].toInt();
-                user.add_friend(p.sender_id(), friend_id);
-                if (clients_map[friend_id]) {
-                    PackageList msg;
-                    Package* pck = msg.add_pack();
-                    pck->set_host_id(p.sender_id());
-                    prepare_status_msg(pck, StatusMsg::CONNECTED, friend_id, (p.status_msg().user_login()));
-                    QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
-                    client->write(f_message);
+            message_for_server(p, client);
+        }
+    }
+}
 
-                    pck->set_host_id(friend_id);
-                    data = user.get_by_id(p.sender_id());
-                    prepare_status_msg(pck, StatusMsg::CONNECTED, p.sender_id(), (data["login"].toStdString()));
-                    QByteArray f_message_second(msg.SerializeAsString().c_str(), msg.ByteSize());
-                    clients_map.at(friend_id)->write(f_message_second);
+void hackserver::message_for_server(const Package& p, QTcpSocket* client) {
+    switch (p.status_msg().status()) {
+    case StatusMsg::CONNECTED: {
+        if (auth(p, client)) {
+            client_number++;
+        }
+        break;
+    }
+    case StatusMsg::NEW_USER: {
+        register_user(p, client);
+        break;
+    }
+    case StatusMsg::SEARCH: {
+        ObjectDAO<UserBuilder, UserHandler> search_obj;
+        QMap<QString, QString> friends = search_obj.friend_search(QString::fromStdString(p.status_msg().user_login()));
+        PackageList ans;
+        Package* empty_pckg = ans.add_pack();
+        empty_pckg->set_host_id(p.sender_id());
+        if (friends.isEmpty()) {
+            prepare_status_msg(empty_pckg, StatusMsg::NOT_FOUND);
+        } else {
+            prepare_status_msg(empty_pckg, StatusMsg::SEARCH);
+            QVector<QString> already_friends = search_obj.get_friends(p.sender_id());
+            for (auto& it : friends.toStdMap()) {
+                if (p.sender_id() == it.first.toInt() || already_friends.contains(it.first)) {
+                    continue;
                 }
+                Package* pckg = ans.add_pack();
+                pckg->set_host_id(p.sender_id());
+                prepare_status_msg(pckg, StatusMsg::SEARCH, it.first.toInt(), it.second.toStdString());
             }
         }
+        QByteArray f_message(ans.SerializeAsString().c_str(), ans.ByteSize());
+        client->write(f_message);
+        break;
+    }
+    case StatusMsg::ADD: {
+        ObjectDAO<UserBuilder, UserHandler> user;
+        QMap<QString, QString> data = user.get_by_log(QString::fromStdString(p.status_msg().user_login()));
+        int friend_id = data["id"].toInt();
+        user.add_friend(p.sender_id(), friend_id);
+        if (clients_map[friend_id]) {
+            PackageList msg;
+            Package* pck = msg.add_pack();
+            pck->set_host_id(p.sender_id());
+            prepare_status_msg(pck, StatusMsg::CONNECTED, friend_id, (p.status_msg().user_login()));
+            QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
+            client->write(f_message);
+
+            pck->set_host_id(friend_id);
+            data = user.get_by_id(p.sender_id());
+            prepare_status_msg(pck, StatusMsg::CONNECTED, p.sender_id(), (data["login"].toStdString()));
+            QByteArray f_message_second(msg.SerializeAsString().c_str(), msg.ByteSize());
+            clients_map.at(friend_id)->write(f_message_second);
+        }
+        break;
+    }
+    default:
+            break;
     }
 }
 

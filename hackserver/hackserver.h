@@ -55,6 +55,7 @@ private:
     bool auth(const Package& msg, QTcpSocket* user);
     void register_user(const Package& msg, QTcpSocket* user);
     void prepare_status_msg(Package* package, StatusMsg::Status status, int user_id = 0, std::string user_login = "");
+    void message_for_server(const Package& p, QTcpSocket* client);
 };
 
 #endif // HACKSERVER_H

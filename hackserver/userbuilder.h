@@ -4,6 +4,12 @@
 #include <QString>
 
 class UserBuilder {
+private:
+    QString user_table = "users";
+    QString friends_table = "friends";
+    QString id_col = "rowid";
+    QString login_col = "login";
+    QString pass_col = "p_hash";
 public:
     UserBuilder() {}
     QString get(int id) {
