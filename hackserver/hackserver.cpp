@@ -7,16 +7,6 @@ hackserver::hackserver(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    tcpServ = new QTcpServer(this);
-
-    tcpServ->listen(QHostAddress::LocalHost, 8888);
-    connect(tcpServ, SIGNAL(newConnection()), this, SLOT(connect_new()));
-
-    db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("/home/kaito/hackchat/hackserver/hackdb.db3");
-    if(!db.open()) {
-        qDebug() << db.lastError().text();
-    }
 }
 
 hackserver::~hackserver() {
@@ -248,4 +238,19 @@ void hackserver::prepare_status_msg(Package* package, StatusMsg::Status status, 
     status_msg->set_user_id(user_id);
     status_msg->set_user_login(user_login);
     package->set_allocated_status_msg(status_msg);
+}
+
+void hackserver::on_startButton_released()
+{
+    tcpServ = new QTcpServer(this);
+
+    tcpServ->listen(QHostAddress(ui->address_line->text()), ui->port_line->text().toInt());
+    connect(tcpServ, SIGNAL(newConnection()), this, SLOT(connect_new()));
+    ui->stackedWidget->setCurrentIndex(1);
+
+    db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("/home/kaito/hackchat/hackserver/hackdb.db3");
+    if(!db.open()) {
+        qDebug() << db.lastError().text();
+    }
 }

@@ -40,6 +40,9 @@ public slots:
     void read();
     void disconnect();
 
+private slots:
+    void on_startButton_released();
+
 private:
     Ui::hackserver* ui;
     QTcpServer* tcpServ;
