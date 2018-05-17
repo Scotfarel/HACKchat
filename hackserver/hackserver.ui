@@ -635,7 +635,7 @@ border-radius: 3px</string>
          </widget>
         </item>
         <item>
-         <widget class="QPlainTextEdit" name="plainTextEdit">
+         <widget class="QListWidget" name="users">
           <property name="palette">
            <palette>
             <active>
@@ -764,7 +764,7 @@ border-radius: 3px</string>
          </widget>
         </item>
         <item>
-         <widget class="QListWidget" name="users">
+         <widget class="QPlainTextEdit" name="plainTextEdit">
           <property name="palette">
            <palette>
             <active>
@@ -891,25 +891,6 @@ border-radius: 3px</string>
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>323</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

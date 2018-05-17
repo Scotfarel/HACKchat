@@ -51,13 +51,13 @@ private:
     void prepare_status_msg(Package* package, StatusMsg::Status status, int user_id, std::string user_login, std::string hash = "");
 private slots:
     void on_send_button_clicked();
-    void on_msg_edit_textEdited(const QString &arg1);
+    void on_msg_edit_textChanged(const QString &arg1);
     void on_log_in_button_pressed();
     void on_login_line_textEdited();
     void on_password_line_textEdited();
     void on_msg_edit_returnPressed();
     void on_sign_in_button_pressed();
-    void on_search_line_textEdited(const QString &arg1);
+    void on_search_line_textChanged(const QString &arg1);
     void on_online_itemDoubleClicked(QListWidgetItem *item);
     void on_online_itemSelectionChanged();
     void on_log_out_button_released();

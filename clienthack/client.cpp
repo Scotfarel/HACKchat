@@ -13,8 +13,12 @@ Client::Client(QWidget *parent) :
     ui->msg_edit->hide();
     ui->send_button->hide();
     ui->feature->hide();
-
-    ui->search_line->setPlaceholderText("Friend search");
+    ui->line_2->hide();
+    ui->line_6->hide();
+    ui->line_11->hide();
+    ui->line_10->hide();
+    ui->line_8->hide();
+    ui->line_5->hide();
 
     QString ip_range = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
     QRegExp ip_regex("^" + ip_range + "\\." + ip_range + "\\." + ip_range + "\\." + ip_range + "$");
@@ -81,7 +85,9 @@ void Client::msg_from_server(const Package& msg) {
         if (!ui->online_label->text().compare(search_res)) {
             return;
         }
-        ui->online->addItem(QString::fromStdString(msg.status_msg().user_login()));
+        QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(msg.status_msg().user_login()));
+        item->setBackgroundColor(Qt::black);
+        ui->online->addItem(item);
         break;
     }
     case StatusMsg::DISCONNECTED: {
@@ -102,8 +108,9 @@ void Client::msg_from_server(const Package& msg) {
             ui->online->clear();
             return;
         }
-        ui->online_label->clear();
-        ui->online->addItem(QString::fromStdString(msg.status_msg().user_login()));
+        QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(msg.status_msg().user_login()));
+        item->setBackgroundColor(Qt::black);
+        ui->online->addItem(item);
         break;
     }
     default:
@@ -136,7 +143,7 @@ void Client::leer() {
     }
 }
 
-void Client::on_msg_edit_textEdited(const QString &arg1) {
+void Client::on_msg_edit_textChanged(const QString &arg1) {
     PackageList list;
     Package* msg = list.add_pack();
 
@@ -149,7 +156,7 @@ void Client::on_msg_edit_textEdited(const QString &arg1) {
             }
         }
     }
-
+    qDebug() << send_to;
     msg->set_host_id(send_to);
     prepare_text_msg(msg, true, arg1.toStdString());
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
@@ -225,13 +232,15 @@ void Client::show_msg(const Package& p) {
     ui->messages->appendPlainText(QString::fromStdString(p.text_msg().msg_text()));
 }
 
-void Client::on_search_line_textEdited(const QString &arg1) {
+void Client::on_search_line_textChanged(const QString &arg1) {
     if (arg1.isEmpty()) {
         ui->online_label->clear();
         ui->online_label->setText("Friends online:");
         ui->online->clear();
         for (auto& u : users_online) {
-            ui->online->addItem(u);
+            QListWidgetItem* item = new QListWidgetItem(u);
+            item->setBackgroundColor(Qt::black);
+            ui->online->addItem(item);
         }
         return;
     }
@@ -263,12 +272,24 @@ void Client::on_online_itemSelectionChanged() {
         ui->msg_edit->hide();
         ui->send_button->hide();
         ui->feature->hide();
+        ui->line_2->hide();
+        ui->line_6->hide();
+        ui->line_11->hide();
+        ui->line_10->hide();
+        ui->line_8->hide();
+        ui->line_5->hide();
     }
     if (ui->online->selectedItems().count() == 1 && ui->online_label->text().compare(search_res) != 0) {
         ui->messages->show();
         ui->msg_edit->show();
         ui->send_button->show();
         ui->feature->show();
+        ui->line_2->show();
+        ui->line_6->show();
+        ui->line_11->show();
+        ui->line_10->show();
+        ui->line_8->show();
+        ui->line_5->show();
     }
 }
 

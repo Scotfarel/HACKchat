@@ -134,7 +134,7 @@ void hackserver::message_for_server(const Package& p, QTcpSocket* client) {
         QMap<QString, QString> data = user.get_user_by_login(QString::fromStdString(p.status_msg().user_login()));
         int friend_id = data["id"].toInt();
         user.add_friend(p.sender_id(), friend_id);
-        if (clients_map[friend_id]) {
+        if (clients_map.find(friend_id) != clients_map.end()) {
             PackageList msg;
             Package* pck = msg.add_pack();
             pck->set_host_id(p.sender_id());
