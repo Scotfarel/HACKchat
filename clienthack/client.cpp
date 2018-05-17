@@ -10,7 +10,6 @@ Client::Client(QWidget *parent) :
     ui->login_line->setFocus();
 
     ui->messages->hide();
-    ui->messages_label->hide();
     ui->msg_edit->hide();
     ui->send_button->hide();
     ui->feature->hide();
@@ -95,7 +94,7 @@ void Client::msg_from_server(const Package& msg) {
         break;
     }
     case StatusMsg::NOT_FOUND: {
-        ui->info_label->setText("Users not found");
+        ui->online_label->setText("Users not found");
         break;
     }
     case StatusMsg::SEARCH: {
@@ -103,7 +102,7 @@ void Client::msg_from_server(const Package& msg) {
             ui->online->clear();
             return;
         }
-        ui->info_label->clear();
+        ui->online_label->clear();
         ui->online->addItem(QString::fromStdString(msg.status_msg().user_login()));
         break;
     }
@@ -228,7 +227,7 @@ void Client::show_msg(const Package& p) {
 
 void Client::on_search_line_textEdited(const QString &arg1) {
     if (arg1.isEmpty()) {
-        ui->info_label->clear();
+        ui->online_label->clear();
         ui->online_label->setText("Friends online:");
         ui->online->clear();
         for (auto& u : users_online) {
@@ -261,14 +260,12 @@ void Client::on_online_itemSelectionChanged() {
     ui->feature->clear();
     if (ui->online->selectedItems().count() == 0) {
         ui->messages->hide();
-        ui->messages_label->hide();
         ui->msg_edit->hide();
         ui->send_button->hide();
         ui->feature->hide();
     }
     if (ui->online->selectedItems().count() == 1 && ui->online_label->text().compare(search_res) != 0) {
         ui->messages->show();
-        ui->messages_label->show();
         ui->msg_edit->show();
         ui->send_button->show();
         ui->feature->show();
