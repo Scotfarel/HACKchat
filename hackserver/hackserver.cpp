@@ -7,6 +7,13 @@ hackserver::hackserver(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    QString ip_range = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
+    QRegExp ip_regex("^" + ip_range + "\\." + ip_range + "\\." + ip_range + "\\." + ip_range + "$");
+    QRegExpValidator* ip_validator = new QRegExpValidator(ip_regex, this);
+    ui->address_line->setValidator(ip_validator);
+
+    QIntValidator* intValidator = new QIntValidator(0, 9999, this);
+    ui->port_line->setValidator(intValidator);
 }
 
 hackserver::~hackserver() {
