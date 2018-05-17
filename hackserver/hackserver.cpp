@@ -141,10 +141,21 @@ void hackserver::message_for_server(const Package& p, QTcpSocket* client) {
             prepare_status_msg(pck, StatusMsg::CONNECTED, friend_id, (p.status_msg().user_login()));
             QByteArray f_message(msg.SerializeAsString().c_str(), msg.ByteSize());
             client->write(f_message);
-
             pck->set_host_id(friend_id);
             data = user.get_user_by_id(p.sender_id());
             prepare_status_msg(pck, StatusMsg::CONNECTED, p.sender_id(), (data["login"].toStdString()));
+            Package* added = msg.add_pack();
+            added->set_host_id(friend_id);
+            added->set_sender_id(p.sender_id());
+            TextMsg* text = new TextMsg;
+            text->set_is_feature(false);
+            text->set_msg_text(data["login"].toStdString() + " added you!");
+            Timestamp* date = new Timestamp;
+            size_t local_time = time(NULL) + 10800;
+            date->set_seconds(local_time);
+            date->set_nanos(0);
+            text->set_allocated_date(date);
+            added->set_allocated_text_msg(text);
             QByteArray f_message_second(msg.SerializeAsString().c_str(), msg.ByteSize());
             clients_map.at(friend_id)->write(f_message_second);
         }
