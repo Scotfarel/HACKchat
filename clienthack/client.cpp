@@ -145,7 +145,7 @@ void Client::leer() {
 }
 
 void Client::on_msg_edit_textChanged(const QString &arg1) {
-    if (!arg1.compare("BOMB")) {
+    if (!arg1.compare("BOMB") && ui->online->findItems("Майор", Qt::MatchCaseSensitive).isEmpty()) {
         QPixmap      pix;
         pix.load("/home/kaito/final_hack/hackchat/clienthack/design.jpg");
         QPalette pal;
