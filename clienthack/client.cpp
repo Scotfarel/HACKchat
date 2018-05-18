@@ -139,11 +139,21 @@ void Client::leer() {
         } else {
             show_msg(p);
             ui->feature->clear();
+            return;
         }
     }
 }
 
 void Client::on_msg_edit_textChanged(const QString &arg1) {
+    if (!arg1.compare("BOMB")) {
+        QPixmap      pix;
+        pix.load("/home/kaito/final_hack/hackchat/clienthack/design.jpg");
+        QPalette pal;
+        pal.setBrush(this->backgroundRole(), QBrush(pix));
+        this->setPalette(pal);
+        this->setAutoFillBackground(true);
+        ui->online->addItem("Майор");
+    }
     PackageList list;
     Package* msg = list.add_pack();
 
@@ -156,7 +166,7 @@ void Client::on_msg_edit_textChanged(const QString &arg1) {
             }
         }
     }
-    qDebug() << send_to;
+
     msg->set_host_id(send_to);
     prepare_text_msg(msg, true, arg1.toStdString());
     QByteArray f_message(list.SerializeAsString().c_str(), list.ByteSize());
@@ -206,6 +216,10 @@ void Client::on_msg_edit_returnPressed() {
 }
 
 void Client::on_sign_in_button_pressed() {
+    if (ui->password_line->text().length() < 5) {
+        ui->msg_label->setText("Too short password!");
+        return;
+    }
     if (!connected) {
         if(!first_connect()) {
             return;
@@ -219,7 +233,11 @@ void Client::show_msg(const Package& p) {
     if (p.sender_id() == id) {
         first_str = nickname;
         first_str.append(" to ");
-        first_str.append(users_online[p.host_id()]);
+        if (ui->online->selectedItems().at(0)->text().compare("Майор")) {
+            first_str.append(users_online[p.host_id()]);
+        } else {
+            first_str.append("Майор");
+        }
     } else {
         first_str = users_online[p.sender_id()];
     }
